@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Hello">Hello World, Click Me!</string>
+    <string name="ApplicationName">POS</string>
+    <string name="LeftDrawerDescWhenOpen">What to choose?</string>
+    <string name="LeftDrawerDescWhenClose">My Store</string>
+    <string name="Sales">Sales</string>
+    <string name="Inventory">Inventory</string>
+    <string name="Help">Help</string>
+</resources>
