@@ -27,7 +27,7 @@ using System.Threading;
 namespace POSV1
 {
     [Activity(Theme = "@style/AppTheme")]
-    public class MainActivity : ActionBarActivity, IScrollDirectorListener, AbsListView.IOnScrollListener
+    public class MainActivity : ActionBarActivity//, IScrollDirectorListener, AbsListView.IOnScrollListener
     {
         public static string dbPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "my_store.db");
         private SupportToolbar mToolbar;
@@ -40,13 +40,13 @@ namespace POSV1
         private Button btnEvaluateItem, btnClearItem;
         private IMenu menu;
         private ProgressDialog progressBar;
-        private string requestType, evaluationType, command; 
+        private string requestType, evaluationType, command;
         private EditText etPurchasedPrice, etRetailPrice, etStocks, etAvarageCost, etBarcode;
         private AutoCompleteTextView actvItemName;
         private LinearLayout parentLayout;
         private SQLiteADO sqliteADO;
-        private double oldPrice = 0.0;
-        private int oldStock = 0;
+        private double? oldPrice = 0.0;
+        private int? oldStock = 0;
         private int currentRetrieveItems = 0;
         private List<ListItem> itemListDisplay = new List<ListItem>();
         private FrameLayout flInvetoryList;
@@ -55,6 +55,45 @@ namespace POSV1
         private AlertDialog popupDialog;
         private ListItemAdapter listItemAdapter;
         private string filterValue = "";
+        private List<ListItem> selectedItems = new List<ListItem>();
+        private System.Threading.Thread hideFabThread;
+        private Animation mainFab_show;
+        private Animation mainFab_hide;
+        private Animation childFab_show;
+        private Animation childFab_hide;
+        private com.refractored.fab.FloatingActionButton mainFab;
+        private FrameLayout.LayoutParams mainLayoutParams;
+        private TextView tvShowMore;
+        private FrameLayout.LayoutParams tvShowMoreLayoutParams;
+        private com.refractored.fab.FloatingActionButton showDetailFab;
+        private FrameLayout.LayoutParams showDetailFabLayoutParams;
+        private TextView tvShowDetail;
+        private FrameLayout.LayoutParams tvShowDetailLayoutParams;
+        private com.refractored.fab.FloatingActionButton editSelectedFab;
+        private FrameLayout.LayoutParams editSelectedFabLayoutParams;
+        private TextView tvEditSelected;
+        private FrameLayout.LayoutParams tvEditSelectedLayoutParams;
+        private com.refractored.fab.FloatingActionButton deleteSelectedFab;
+        private FrameLayout.LayoutParams deleteSelectedFabLayoutParams;
+        private TextView tvDeleteSelected;
+        private FrameLayout.LayoutParams tvDeleteSelectedLayoutParams;
+        private com.refractored.fab.FloatingActionButton uncheckAllFab;
+        private FrameLayout.LayoutParams uncheckAllFabLayoutParams;
+        private TextView tvUncheckAll;
+        private FrameLayout.LayoutParams tvUncheckAllLayoutParams;
+        private com.refractored.fab.FloatingActionButton checkAllFab;
+        private FrameLayout.LayoutParams checkAllFabLayoutParams;
+        private TextView tvCheckAll;
+        private FrameLayout.LayoutParams tvCheckAllLayoutParams;
+        private TextView tvSearch;
+        private FrameLayout.LayoutParams etSearchLayoutParams;
+        private Dialog popupMenuDialog;
+        private TextView tvIndicator;
+        private bool isAllowedToCloseDialog = true;
+        private int countDialogShown;
+        private Item itemHolder = new Item();
+        private bool scannedState = false;
+        private bool canScan = false;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -77,6 +116,12 @@ namespace POSV1
             flInvetoryList = FindViewById<FrameLayout>(Resource.Id.InventoryList);
             glInventory = FindViewById<ScrollView>(Resource.Id.Inventory);
             lvItems = FindViewById<ListView>(Resource.Id.lvList);
+
+            //Animations
+            mainFab_show = AnimationUtils.LoadAnimation(this, Resource.Layout.mainFab_show);
+            mainFab_hide = AnimationUtils.LoadAnimation(this, Resource.Layout.mainFab_hide);
+            childFab_show = AnimationUtils.LoadAnimation(this, Resource.Layout.childFab_show);
+            childFab_hide = AnimationUtils.LoadAnimation(this, Resource.Layout.childFab_hide);
 
             mLeftDrawer.Tag = 0;
             mRightDrawer.Tag = 1;
@@ -112,6 +157,15 @@ namespace POSV1
 
             this.initializeToolbarTitle(bundle);
             this.getItems("SELECT * FROM Item");
+        }
+        public void hideLayouts()
+        {
+            scannedState = false;
+            glAbout.Visibility = ViewStates.Gone;
+            glInventory.Visibility = ViewStates.Gone;
+            flInvetoryList.Visibility = ViewStates.Gone;
+            this.hideOptionMenu(Resource.Id.action_more);
+            this.hideOptionMenu(Resource.Id.action_refresh);
         }
         public string formatCurrency(string value)
         {
@@ -177,11 +231,10 @@ namespace POSV1
         }
         private void mLeftDrawer_ItemClicked(object sender, AdapterView.ItemClickEventArgs e)
         {
-            glAbout.Visibility = ViewStates.Gone;
-            glInventory.Visibility = ViewStates.Gone;
-            flInvetoryList.Visibility = ViewStates.Gone;
-            this.hideOptionMenu(Resource.Id.action_more);
-            this.hideOptionMenu(Resource.Id.action_refresh);
+            if (hideFabThread != null)
+                hideFabThread.Abort();
+
+            this.hideLayouts();
 
             switch (e.Position)
             {
@@ -201,7 +254,7 @@ namespace POSV1
                     mDrawerToggle.setCloseDrawerDesc(Resource.String.LeftDrawerDescWhenClose);
                     glAbout.Visibility = ViewStates.Visible;
                     break;
-                default: 
+                default:
                     mDrawerToggle.setCloseDrawerDesc(Resource.String.Help);
                     break;
             }
@@ -209,63 +262,71 @@ namespace POSV1
         }
         private void mRightDrawer_ItemClicked(object sender, AdapterView.ItemClickEventArgs e)
         {
-            glAbout.Visibility = ViewStates.Gone;
-            glInventory.Visibility = ViewStates.Gone;
-            flInvetoryList.Visibility = ViewStates.Gone;
+            if (hideFabThread != null)
+                hideFabThread.Abort();
+
+            this.hideLayouts();
 
             etBarcode.Enabled = true;
             etPurchasedPrice.Enabled = true;
             etRetailPrice.Enabled = true;
             etAvarageCost.Enabled = false;
             etStocks.Enabled = true;
-            switch (e.Position)
+            if (canScan)
             {
-                case 0://Scan
-                    this.hideOptionMenu(Resource.Id.action_refresh);
-                    if (requestType.Equals("Show Items"))
-                    {
-                        this.btnScanItem_Clicked();
-                        evaluationType = "Scan";
-                    }
-                    break;
-                case 1: //Add
-                    this.hideOptionMenu(Resource.Id.action_refresh);
-                    if (requestType.Equals("Show Items"))
-                    {
-                        evaluationType = "Save";
-                        glInventory.Visibility = ViewStates.Visible;
-
-                        etPurchasedPrice.KeyPress += etPurchasedPrice_ItemChanged;
-                        etStocks.KeyPress += etPurchasedPrice_ItemChanged;
-                    }
-                    break;
-                //case 2: //Edit
-                //    if (requestType.Equals("Show Items"))
-                //    {
-                //        evaluationType = "Update";
-                //        glInventory.Visibility = ViewStates.Visible;
-                //    }
-                //    break;
-                //case 3://Delete
-                //    if (requestType.Equals("Show Items"))
-                //    {
-                //        evaluationType = "Delete";
-                //        glInventory.Visibility = ViewStates.Visible;
-                //        etPurchasedPrice.Enabled = false;
-                //        etRetailPrice.Enabled = false;
-                //        etAvarageCost.Enabled = false;
-                //        etBarcode.Enabled = false;
-                //        etStocks.Enabled = false;
-                //    }
-                //    break;
-                default:
-                    if (requestType.Equals("Show Items"))
-                    {
-                        evaluationType = "ShowItemList";
-                        flInvetoryList.Visibility = ViewStates.Visible;
-                        this.showOptionMenu(Resource.Id.action_refresh);
-                    }
-                    break;
+                switch (e.Position)
+                {
+                    case 0://Scan
+                        if (requestType.Equals("Show Items"))
+                        {
+                            this.btnScanItem_Clicked();
+                        }
+                        break;
+                    case 1: //Add
+                        if (requestType.Equals("Show Items"))
+                        {
+                            evaluationType = "Save";
+                            glInventory.Visibility = ViewStates.Visible;
+                            this.showOptionMenu(Resource.Id.action_more);
+                            etPurchasedPrice.KeyPress += etPurchasedPrice_ItemChanged;
+                            etStocks.KeyPress += etPurchasedPrice_ItemChanged;
+                        }
+                        break;
+                    default:
+                        if (requestType.Equals("Show Items"))
+                        {
+                            evaluationType = "ShowItemList";
+                            flInvetoryList.Visibility = ViewStates.Visible;
+                            this.showOptionMenu(Resource.Id.action_more);
+                            this.showOptionMenu(Resource.Id.action_refresh);
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                switch (e.Position)
+                {
+                    case 0: //Add
+                        if (requestType.Equals("Show Items"))
+                        {
+                            evaluationType = "Save";
+                            glInventory.Visibility = ViewStates.Visible;
+                            this.showOptionMenu(Resource.Id.action_more);
+                            etPurchasedPrice.KeyPress += etPurchasedPrice_ItemChanged;
+                            etStocks.KeyPress += etPurchasedPrice_ItemChanged;
+                        }
+                        break;
+                    default:
+                        if (requestType.Equals("Show Items"))
+                        {
+                            evaluationType = "ShowItemList";
+                            flInvetoryList.Visibility = ViewStates.Visible;
+                            this.showOptionMenu(Resource.Id.action_more);
+                            this.showOptionMenu(Resource.Id.action_refresh);
+                        }
+                        break;
+                }
             }
             btnEvaluateItem.Text = evaluationType;
             btnEvaluateItem.Click += btnEvaluateItem_Clicked;
@@ -310,17 +371,40 @@ namespace POSV1
         }
         private void setTableItemOptions()
         {
+            Response getAccess = new Response();
+            Configuration configurationModel = new Configuration();
+
             tableItemOptions = new List<TableItem>();
 
-            tableItemOptions.Add(new TableItem() { ImageResourceId = Resource.Drawable.Scan, ItemLabel = "Scan Item" });
+            getAccess = configurationModel.GetAllConfiguration("my_store.db");
+            if (getAccess.status.Equals("SUCCESS"))
+            {
+                foreach (Configuration conf in getAccess.configurationList)
+                {
+                    if (conf.Description.Equals("AllowScanning"))
+                    {
+                        if (conf.IsGranted == 1)
+                        {
+                            tableItemOptions.Add(new TableItem() { ImageResourceId = Resource.Drawable.Scan, ItemLabel = "Scan Item" });
+                            canScan = true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                this.showMessage(getAccess.message);
+            }
+
             tableItemOptions.Add(new TableItem() { ImageResourceId = Resource.Drawable.Add, ItemLabel = "Add Item" });
-            //tableItemOptions.Add(new TableItem() { ImageResourceId = Resource.Drawable.Edit, ItemLabel = "Edit Item" });
-            //tableItemOptions.Add(new TableItem() { ImageResourceId = Resource.Drawable.Delete, ItemLabel = "Delete Item" });
             tableItemOptions.Add(new TableItem() { ImageResourceId = Resource.Drawable.List, ItemLabel = "Show Items" });
         }
         //function that will listen if the left toggle menu is selected
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
+            if (hideFabThread != null)
+                hideFabThread.Abort();
+
             switch (item.ItemId)
             {
                 //Left toggle resource id
@@ -343,21 +427,34 @@ namespace POSV1
                     }
                     return true;
                 case Resource.Id.action_refresh:
-                    if (requestType.Equals("Show Items"))
+                    var messageDialog = new AlertDialog.Builder(this);
+                    messageDialog.SetMessage("Application Message");
+                    messageDialog.SetMessage("Are you sure you want to refresh list?");
+                    messageDialog.SetNegativeButton("No", delegate { });
+                    messageDialog.SetPositiveButton("Yes", delegate
                     {
-                        this.itemListDisplay.Clear();
-                        this.currentRetrieveItems = 0;
-                        this.updateItemListAdapter();
+                        if (requestType.Equals("Show Items"))
+                        {
+                            this.itemListDisplay.Clear();
 
-                        if (this.filterValue.Equals(""))
-                        {
-                            this.getItems("SELECT * FROM Item");
+                            RunOnUiThread(() =>
+                            {
+                                listItemAdapter.resetInstance();
+                                listItemAdapter.NotifyDataSetChanged();
+                                this.currentRetrieveItems = 0;
+                            });
+
+                            if (this.filterValue.Trim().Equals(""))
+                            {
+                                this.getItems("SELECT * FROM Item");
+                            }
+                            else
+                            {
+                                this.getItems(string.Format("SELECT * FROM Item WHERE NAME LIKE '{0}%' OR BARCODE LIKE '{1}%'", this.filterValue, this.filterValue));
+                            }
                         }
-                        else
-                        {
-                            this.getItems(string.Format("SELECT * FROM Item WHERE NAME LIKE '{0}%' OR BARCODE LIKE '{1}%'", this.filterValue, this.filterValue));
-                        }
-                    }
+                    });
+                    messageDialog.Show();
                     return true;
                 default:
                     return base.OnOptionsItemSelected(item);
@@ -410,8 +507,11 @@ namespace POSV1
                         lvItems.Adapter = listItemAdapter;
                     }
                     //Update list of item in ListView Adapter
-                    this.updateItemListAdapter();
-                    currentRetrieveItems = this.itemListDisplay.Count;
+                    RunOnUiThread(() =>
+                    {
+                        listItemAdapter.NotifyDataSetChanged();
+                        currentRetrieveItems = this.itemListDisplay.Count;
+                    });
                 }
                 else
                 {
@@ -423,155 +523,519 @@ namespace POSV1
                 this.showMessage(getItemCount.message);
             }
         }
+        public void hidePopupMenuView_Clicked(object sender, EventArgs e)
+        {
+            if (isAllowedToCloseDialog)
+            {
+                hideFabThread = new System.Threading.Thread(new ThreadStart(delegate
+                {
+                    RunOnUiThread(() =>
+                    {
+                        if (tvIndicator.Visibility == ViewStates.Visible)
+                        {
+                            tvIndicator.Animation = childFab_hide;
+                            tvIndicator.StartAnimation(tvIndicator.Animation);
+                        }
+                        if ((int)tvDeleteSelected.Tag == 1)
+                        {
+                            tvDeleteSelected.Animation = childFab_hide;
+                            tvDeleteSelected.StartAnimation(tvDeleteSelected.Animation);
+                            deleteSelectedFab.Animation = childFab_hide;
+                            deleteSelectedFab.StartAnimation(deleteSelectedFab.Animation);
+                        }
+                        if ((int)tvEditSelected.Tag == 1)
+                        {
+                            tvEditSelected.Animation = childFab_hide;
+                            tvEditSelected.StartAnimation(tvEditSelected.Animation);
+                            editSelectedFab.Animation = childFab_hide;
+                            editSelectedFab.StartAnimation(editSelectedFab.Animation);
+                        }
+                        if ((int)tvCheckAll.Tag == 1)
+                        {
+                            tvCheckAll.Animation = childFab_hide;
+                            tvCheckAll.StartAnimation(tvCheckAll.Animation);
+                            checkAllFab.Animation = childFab_hide;
+                            checkAllFab.StartAnimation(checkAllFab.Animation);
+                        }
+                        if ((int)tvUncheckAll.Tag == 1)
+                        {
+                            tvUncheckAll.Animation = childFab_hide;
+                            tvUncheckAll.StartAnimation(tvUncheckAll.Animation);
+                            uncheckAllFab.Animation = childFab_hide;
+                            uncheckAllFab.StartAnimation(uncheckAllFab.Animation);
+                        }
+                        if ((int)tvShowDetail.Tag == 1)
+                        {
+                            tvShowDetail.Animation = childFab_hide;
+                            tvShowDetail.StartAnimation(tvShowDetail.Animation);
+                            showDetailFab.Animation = childFab_hide;
+                            showDetailFab.StartAnimation(showDetailFab.Animation);
+                        }
+                        if ((int)tvShowMore.Tag == 1)
+                        {
+                            tvShowMore.Animation = childFab_hide;
+                            tvShowMore.StartAnimation(tvShowMore.Animation);
+                            mainFab.Animation = mainFab_hide;
+                            mainFab.StartAnimation(mainFab.Animation);
+                        }
+                        tvDeleteSelected.Tag = 0;
+                        tvEditSelected.Tag = 0;
+                        tvCheckAll.Tag = 0;
+                        tvUncheckAll.Tag = 0;
+                        tvShowDetail.Tag = 0;
+                        tvShowMore.Tag = 0;
+                    });
+
+                    System.Threading.Thread.Sleep(500);
+                    RunOnUiThread(() =>
+                    {
+                        popupMenuDialog.Dismiss(); ;
+                    });
+                }));
+                hideFabThread.Start();
+            }
+        }
+        public void uncheckAllFab_Clicked(object sender, EventArgs e)
+        {
+            int count = 0;
+            if (this.itemListDisplay.Count > 0)
+            {
+                RunOnUiThread(() =>
+                {
+                    tvIndicator.Visibility = ViewStates.Visible;
+                    isAllowedToCloseDialog = false;
+
+                    for (int i = 0; i < this.itemListDisplay.Count; i++)
+                    {
+                        if (this.itemListDisplay[i].IsChecked)
+                        {
+                            tvIndicator.Text = string.Format("Unchecking record {0} of {1}", i + 1, this.itemListDisplay.Count);
+                            this.itemListDisplay[i].IsChecked = false;
+                            count = count + 1;
+                        }
+                        if (i == this.itemListDisplay.Count - 1)
+                        {
+                            if (count != 0)
+                            {
+                                tvIndicator.Text = count.ToString() + " record/s have been unchecked.";
+                            }
+                            else
+                            {
+                                tvIndicator.Text = "All record/s were already unchecked.";
+                            }
+                            isAllowedToCloseDialog = true;
+                            listItemAdapter.NotifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+            else
+            {
+                tvIndicator.Text = "Item list were all deleted.";
+            }
+        }
+        public void checkAllFab_Clicked(object sender, EventArgs e)
+        {
+            int count = 0;
+            if (this.itemListDisplay.Count > 0)
+            {
+                RunOnUiThread(() =>
+                {
+                    tvIndicator.Visibility = ViewStates.Visible;
+                    isAllowedToCloseDialog = false;
+                    for (int i = 0; i < this.itemListDisplay.Count; i++)
+                    {
+                        if (!this.itemListDisplay[i].IsChecked)
+                        {
+                            tvIndicator.Text = string.Format("Checking record {0} of {1}", i + 1, this.itemListDisplay.Count);
+                            this.itemListDisplay[i].IsChecked = true;
+                            count = count + 1;
+                        }
+                        if (i == this.itemListDisplay.Count - 1)
+                        {
+                            if (count != 0)
+                            {
+                                tvIndicator.Text = count.ToString() + " record/s have been checked.";
+                            }
+                            else
+                            {
+                                tvIndicator.Text = "All record/s were already checked.";
+                            }
+                            isAllowedToCloseDialog = true;
+                            listItemAdapter.NotifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+            else
+            {
+                tvIndicator.Text = "Item list were all deleted.";
+            }
+        }
+        public void deleteSelectedFab_Clicked(object sender, EventArgs e)
+        {
+            int count = 0;
+            string firstItem = "";
+            string command = "";
+
+            List<ListItem> itemListDisplayCopy = new List<ListItem>();
+            List<ListItem> deletedItems = new List<ListItem>();
+            tvIndicator.Text = "Preparing for delete...";
+            if (listItemAdapter.getSelectedItems().Count > 0)
+            {
+                var builder = new AlertDialog.Builder(this);
+                builder.SetTitle("Application Message");
+                builder.SetMessage("Are you sure you want to delete selected item/s?");
+                builder.SetPositiveButton("Yes", delegate
+                {
+                    tvIndicator.Visibility = ViewStates.Visible;
+                    isAllowedToCloseDialog = false;
+                    foreach (ListItem listItem in listItemAdapter.getSelectedItems())
+                    {
+                        tvIndicator.Text = string.Format("Preparing in deleting {0}...", listItem.Description.Split('(')[0]);
+                        command += string.Format("DELETE FROM Item WHERE Id = {0};", listItem.Id);
+                        firstItem = listItem.Description.Split('(')[0];
+                        deletedItems.Add(listItem);
+                        this.itemListDisplay.Remove(listItem);
+                        count = count + 1;
+                    }
+
+                    tvIndicator.Text = string.Format("Deleting item/s...");
+                    sqliteADO = new SQLiteADO();
+                    if (sqliteADO.ExecuteNonQuery(string.Format("BEGIN TRANSACTION; {0} COMMIT;", command), dbPath).status.Equals("SUCCESS"))
+                    {
+                        if (count == 1)
+                        {
+                            tvIndicator.Text = firstItem + " have been deleted.";
+                        }
+                        else
+                        {
+                            tvIndicator.Text = count.ToString() + " item/s have been deleted.";
+                        }
+                        RunOnUiThread(() =>
+                        {
+                            listItemAdapter.NotifyDataSetChanged();
+                        });
+                    }
+                    else
+                    {
+                        this.itemListDisplay.AddRange(deletedItems);
+                        this.tvIndicator.Text = "Item(Delete): Error has occured.";
+                    }
+                    deletedItems.Clear();
+                    isAllowedToCloseDialog = true;
+                });
+                builder.SetNegativeButton("No", delegate { tvIndicator.Text = "Tap blank space to go back."; });
+                builder.Create().Show();
+            }
+            else
+            {
+                tvIndicator.Text = "No item selected.";
+            }
+        }
+        public void editSelectedFab_Clicked(object sender, EventArgs e)
+        {
+            Item itemModel = new Item();
+            Response response = new Response();
+            countDialogShown = 0;
+            isAllowedToCloseDialog = false;
+            response = itemModel.GetItem(listItemAdapter.getSelectedItems()[0].Id, "my_store.db");
+            if (response.status.Equals("SUCCESS"))
+            {
+                evaluationType = "Update";
+                btnEvaluateItem.Text = "Update";
+                this.hideLayouts();
+                this.btnEvaluateItem.Click += btnEvaluateItem_Clicked;
+                itemHolder = response.itemList[0];
+                etPurchasedPrice.KeyPress += etPurchasedPrice_ItemChanged;
+                etStocks.KeyPress += etPurchasedPrice_ItemChanged;
+                oldPrice = response.itemList[0].PurchasedPrice;
+                oldStock = response.itemList[0].AvailableStock;
+                this.actvItemName.Text = response.itemList[0].NAME.ToString();
+                this.etBarcode.Text = response.itemList[0].Barcode.ToString().Trim().Equals("") ? " " : response.itemList[0].Barcode.ToString();
+                this.etPurchasedPrice.Text = this.formatCurrency(response.itemList[0].PurchasedPrice.ToString());
+                this.etAvarageCost.Text = this.formatCurrency(response.itemList[0].AverageCost.ToString());
+                this.etRetailPrice.Text = this.formatCurrency(response.itemList[0].RetailPrice.ToString());
+                this.etStocks.Text = response.itemList[0].AvailableStock.ToString();
+                isAllowedToCloseDialog = true;
+                this.hidePopupMenuView_Clicked(sender, e);
+                glInventory.Visibility = ViewStates.Visible;
+                this.showOptionMenu(Resource.Id.action_more);
+            }
+            else
+            {
+                tvIndicator.Text = "Item(Selected): An error has occured.";
+                isAllowedToCloseDialog = true;
+            }
+
+        }
+        public void showDetailFab_Clicked(object sender, EventArgs e)
+        {
+            Item itemModel = new Item();
+            Response response = new Response();
+            var view = LayoutInflater.Inflate(Resource.Layout.ItemDetails, null);
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+            dialogBuilder.SetCancelable(false);
+
+            isAllowedToCloseDialog = false;
+            dialogBuilder.SetView(view);
+            dialogBuilder.SetPositiveButton("Close", delegate { isAllowedToCloseDialog = true; });
+
+            response = itemModel.GetItem(listItemAdapter.getSelectedItems()[0].Id, "my_store.db");
+            if (response.status.Equals("SUCCESS"))
+            {
+                view.FindViewById<EditText>(Resource.Id.etDescription).Text = response.itemList[0].NAME.ToString();
+                view.FindViewById<EditText>(Resource.Id.etBarcode).Text = response.itemList[0].Barcode.ToString().Trim().Equals("") ? " " : response.itemList[0].Barcode.ToString();
+                view.FindViewById<EditText>(Resource.Id.etPurchasedPrice).Text = this.formatCurrency(response.itemList[0].PurchasedPrice.ToString());
+                view.FindViewById<EditText>(Resource.Id.etAverageCost).Text = this.formatCurrency(response.itemList[0].AverageCost.ToString());
+                view.FindViewById<EditText>(Resource.Id.etRetailPrice).Text = this.formatCurrency(response.itemList[0].RetailPrice.ToString());
+                view.FindViewById<EditText>(Resource.Id.etAvailableStocks).Text = response.itemList[0].AvailableStock.ToString();
+                dialogBuilder.Create().Show();
+            }
+            else
+            {
+                tvIndicator.Text = "Item(Selected): An error has occured.";
+                isAllowedToCloseDialog = true;
+            }
+        }
+        public void mainFab_Clicked(object sender, EventArgs e)
+        {
+            if (this.filterValue.Trim().Equals(""))
+            {
+                this.getItems("SELECT * FROM Item");
+                this.hidePopupMenuView_Clicked(sender, e);
+            }
+            else
+            {
+                this.getItems(string.Format("SELECT * FROM Item WHERE NAME LIKE '{0}%' OR BARCODE LIKE '{1}%'", this.filterValue, this.filterValue));
+                this.hidePopupMenuView_Clicked(sender, e);
+            }
+        }
         public void fabItem_Clicked(object sender, EventArgs e)
         {
             if (this.itemListDisplay.Count > 0)
             {
                 var popupMenuView = LayoutInflater.Inflate(Resource.Layout.PopupMenu, null);
-                Dialog popupMenuDialog = new Dialog(this, Android.Resource.Style.AnimationTranslucent);
+                popupMenuDialog = new Dialog(this, Android.Resource.Style.AnimationTranslucent);
                 popupMenuDialog.SetContentView(popupMenuView);
                 popupMenuDialog.Show();
                 popupMenuDialog.SetCancelable(false);
 
-                //Animations
-                Animation mainFab_show = AnimationUtils.LoadAnimation(this, Resource.Layout.mainFab_show);
-                Animation mainFab_hide = AnimationUtils.LoadAnimation(this, Resource.Layout.mainFab_hide);
-                Animation childFab_show = AnimationUtils.LoadAnimation(this, Resource.Layout.childFab_show);
-                Animation childFab_hide = AnimationUtils.LoadAnimation(this, Resource.Layout.childFab_hide);
+                if (hideFabThread != null)
+                    hideFabThread.Abort();
 
-                com.refractored.fab.FloatingActionButton mainFab = popupMenuView.FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.mainFab);
-                FrameLayout.LayoutParams mainLayoutParams = (FrameLayout.LayoutParams)mainFab.LayoutParameters;
+                tvIndicator = popupMenuView.FindViewById<TextView>(Resource.Id.tvIndicator);
+                tvIndicator.Visibility = ViewStates.Visible;
+                tvIndicator.Text = "Tap blank space to go back.";
+                tvIndicator.Click += hidePopupMenuView_Clicked;
+
+                //Animations
+                mainFab_show = AnimationUtils.LoadAnimation(this, Resource.Layout.mainFab_show);
+                mainFab_hide = AnimationUtils.LoadAnimation(this, Resource.Layout.mainFab_hide);
+                childFab_show = AnimationUtils.LoadAnimation(this, Resource.Layout.childFab_show);
+                childFab_hide = AnimationUtils.LoadAnimation(this, Resource.Layout.childFab_hide);
+
+                mainFab = popupMenuView.FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.mainFab);
+                mainLayoutParams = (FrameLayout.LayoutParams)mainFab.LayoutParameters;
                 mainFab.LayoutParameters = mainLayoutParams;
                 mainFab.Animation = mainFab_show;
                 mainFab.Clickable = true;
 
-                com.refractored.fab.FloatingActionButton deleteSelectedFab = popupMenuView.FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.deleteSelectedFab);
-                FrameLayout.LayoutParams deleteSelectedFabLayoutParams = (FrameLayout.LayoutParams)deleteSelectedFab.LayoutParameters;
-                deleteSelectedFabLayoutParams.RightMargin = deleteSelectedFabLayoutParams.RightMargin + (int)(deleteSelectedFabLayoutParams.RightMargin * .60);
-                deleteSelectedFabLayoutParams.BottomMargin = deleteSelectedFabLayoutParams.BottomMargin * 5;
-                deleteSelectedFab.LayoutParameters = deleteSelectedFabLayoutParams;
-                deleteSelectedFab.Size = FabSize.Mini;
-                deleteSelectedFab.Animation = childFab_show;
-                deleteSelectedFab.Clickable = true;
+                tvShowMore = popupMenuView.FindViewById<TextView>(Resource.Id.tvShowMore);
+                tvShowMoreLayoutParams = (FrameLayout.LayoutParams)tvShowMore.LayoutParameters;
 
-                TextView tvDeleteSelected = popupMenuView.FindViewById<TextView>(Resource.Id.tvDeleteSelected);
-                FrameLayout.LayoutParams tvDeleteSelectedLayoutParams = (FrameLayout.LayoutParams)tvDeleteSelected.LayoutParameters;
-                tvDeleteSelectedLayoutParams.RightMargin = tvDeleteSelectedLayoutParams.RightMargin + (int)(tvDeleteSelectedLayoutParams.RightMargin * 4);
-                tvDeleteSelectedLayoutParams.BottomMargin = tvDeleteSelectedLayoutParams.BottomMargin * 5  +(int)(tvDeleteSelectedLayoutParams.BottomMargin * .4);
-                tvDeleteSelected.LayoutParameters = tvDeleteSelectedLayoutParams;
-                tvDeleteSelected.Animation = childFab_show;
-                tvDeleteSelected.Clickable = true;
+                showDetailFab = popupMenuView.FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.showDetailFab);
+                showDetailFabLayoutParams = (FrameLayout.LayoutParams)showDetailFab.LayoutParameters;
 
-                com.refractored.fab.FloatingActionButton editSelectedFab = popupMenuView.FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.editSelectedFab);
-                FrameLayout.LayoutParams editSelectedFabLayoutParams = (FrameLayout.LayoutParams)editSelectedFab.LayoutParameters;
-                editSelectedFabLayoutParams.RightMargin = editSelectedFabLayoutParams.RightMargin + (int)(editSelectedFabLayoutParams.RightMargin * .60);
-                editSelectedFabLayoutParams.BottomMargin = editSelectedFabLayoutParams.BottomMargin * 8;
-                editSelectedFab.LayoutParameters = editSelectedFabLayoutParams;
-                editSelectedFab.Size = FabSize.Mini;
-                editSelectedFab.Animation = childFab_show;
-                editSelectedFab.Clickable = true;
+                tvShowDetail = popupMenuView.FindViewById<TextView>(Resource.Id.tvShowDetail);
+                tvShowDetailLayoutParams = (FrameLayout.LayoutParams)tvShowDetail.LayoutParameters;
 
-                TextView tvEditSelected = popupMenuView.FindViewById<TextView>(Resource.Id.tvEditSelected);
-                FrameLayout.LayoutParams tvEditSelectedLayoutParams = (FrameLayout.LayoutParams)tvEditSelected.LayoutParameters;
-                tvEditSelectedLayoutParams.RightMargin = tvEditSelectedLayoutParams.RightMargin + (int)(tvEditSelectedLayoutParams.RightMargin * 4);
-                tvEditSelectedLayoutParams.BottomMargin = tvEditSelectedLayoutParams.BottomMargin * 8 + (int)(tvEditSelectedLayoutParams.BottomMargin * .4);
-                tvEditSelected.LayoutParameters = tvEditSelectedLayoutParams;
-                tvEditSelected.Animation = childFab_show;
-                tvEditSelected.Clickable = true;
+                editSelectedFab = popupMenuView.FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.editSelectedFab);
+                editSelectedFabLayoutParams = (FrameLayout.LayoutParams)editSelectedFab.LayoutParameters;
 
-                com.refractored.fab.FloatingActionButton uncheckAllFab = popupMenuView.FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.unCheckAllFab);
-                FrameLayout.LayoutParams uncheckAllFabLayoutParams = (FrameLayout.LayoutParams)uncheckAllFab.LayoutParameters;
-                uncheckAllFabLayoutParams.RightMargin = uncheckAllFabLayoutParams.RightMargin + (int)(uncheckAllFabLayoutParams.RightMargin * .60);
-                uncheckAllFabLayoutParams.BottomMargin = uncheckAllFabLayoutParams.BottomMargin * 11;
-                uncheckAllFab.LayoutParameters = uncheckAllFabLayoutParams;
-                uncheckAllFab.Size = FabSize.Mini;
-                uncheckAllFab.Animation = childFab_show;
-                uncheckAllFab.Clickable = true;
+                tvEditSelected = popupMenuView.FindViewById<TextView>(Resource.Id.tvEditSelected);
+                tvEditSelectedLayoutParams = (FrameLayout.LayoutParams)tvEditSelected.LayoutParameters;
 
-                TextView tvUncheckAll = popupMenuView.FindViewById<TextView>(Resource.Id.tvUncheckAll);
-                FrameLayout.LayoutParams tvUncheckAllLayoutParams = (FrameLayout.LayoutParams)tvUncheckAll.LayoutParameters;
-                tvUncheckAllLayoutParams.RightMargin = tvUncheckAllLayoutParams.RightMargin + (int)(tvUncheckAllLayoutParams.RightMargin * 4);
-                tvUncheckAllLayoutParams.BottomMargin = tvUncheckAllLayoutParams.BottomMargin * 11 + (int)(tvUncheckAllLayoutParams.BottomMargin * .4);
-                tvUncheckAll.LayoutParameters = tvUncheckAllLayoutParams;
-                tvUncheckAll.Animation = childFab_show;
-                tvUncheckAll.Clickable = true;
+                deleteSelectedFab = popupMenuView.FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.deleteSelectedFab);
+                deleteSelectedFabLayoutParams = (FrameLayout.LayoutParams)deleteSelectedFab.LayoutParameters;
 
-                com.refractored.fab.FloatingActionButton checkAllFab = popupMenuView.FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.checkAllFab);
-                FrameLayout.LayoutParams checkAllFabLayoutParams = (FrameLayout.LayoutParams)checkAllFab.LayoutParameters;
-                checkAllFabLayoutParams.RightMargin = checkAllFabLayoutParams.RightMargin + (int)(checkAllFabLayoutParams.RightMargin * .60);
-                checkAllFabLayoutParams.BottomMargin = checkAllFabLayoutParams.BottomMargin * 14;
-                checkAllFab.LayoutParameters = checkAllFabLayoutParams;
-                checkAllFab.Size = FabSize.Mini;
-                checkAllFab.Animation = childFab_show;
-                checkAllFab.Clickable = true;
+                tvDeleteSelected = popupMenuView.FindViewById<TextView>(Resource.Id.tvDeleteSelected);
+                tvDeleteSelectedLayoutParams = (FrameLayout.LayoutParams)tvDeleteSelected.LayoutParameters;
 
-                TextView tvCheckAll = popupMenuView.FindViewById<TextView>(Resource.Id.tvCheckAll);
-                FrameLayout.LayoutParams tvCheckAllLayoutParams = (FrameLayout.LayoutParams)tvCheckAll.LayoutParameters;
-                tvCheckAllLayoutParams.RightMargin = tvCheckAllLayoutParams.RightMargin + (int)(tvCheckAllLayoutParams.RightMargin * 4);
-                tvCheckAllLayoutParams.BottomMargin = tvCheckAllLayoutParams.BottomMargin * 14 + (int)(tvCheckAllLayoutParams.BottomMargin * .4);
-                tvCheckAll.LayoutParameters = tvCheckAllLayoutParams;
-                tvCheckAll.Animation = childFab_show;
-                tvCheckAll.Clickable = true;
+                uncheckAllFab = popupMenuView.FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.unCheckAllFab);
+                uncheckAllFabLayoutParams = (FrameLayout.LayoutParams)uncheckAllFab.LayoutParameters;
 
-                com.refractored.fab.FloatingActionButton searchFab = popupMenuView.FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.searchFab);
-                FrameLayout.LayoutParams searchFabLayoutParams = (FrameLayout.LayoutParams)searchFab.LayoutParameters;
-                searchFabLayoutParams.RightMargin = searchFabLayoutParams.RightMargin + (int)(searchFabLayoutParams.RightMargin * .60);
-                searchFabLayoutParams.BottomMargin = searchFabLayoutParams.BottomMargin * 17;
-                searchFab.LayoutParameters = searchFabLayoutParams;
-                searchFab.Size = FabSize.Mini;
-                searchFab.Animation = childFab_show;
-                searchFab.Clickable = true;
+                tvUncheckAll = popupMenuView.FindViewById<TextView>(Resource.Id.tvUncheckAll);
+                tvUncheckAllLayoutParams = (FrameLayout.LayoutParams)tvUncheckAll.LayoutParameters;
 
-                popupMenuView.Click += (object sender1, EventArgs e1) =>
+                checkAllFab = popupMenuView.FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.checkAllFab);
+                checkAllFabLayoutParams = (FrameLayout.LayoutParams)checkAllFab.LayoutParameters;
+
+                tvCheckAll = popupMenuView.FindViewById<TextView>(Resource.Id.tvCheckAll);
+                tvCheckAllLayoutParams = (FrameLayout.LayoutParams)tvCheckAll.LayoutParameters;
+
+                tvShowMoreLayoutParams.RightMargin = tvShowMoreLayoutParams.RightMargin + (int)(tvShowMoreLayoutParams.RightMargin * 4);
+                tvShowMoreLayoutParams.BottomMargin = tvShowMoreLayoutParams.BottomMargin * 2;
+                tvShowMore.Animation = childFab_show;
+                tvShowMore.Clickable = true;
+
+                if (this.listItemAdapter.getSelectedItems().Count == 0 || this.listItemAdapter.getSelectedItems().Count != 1)
                 {
-                    new System.Threading.Thread(new ThreadStart(delegate
-                    {
-                        RunOnUiThread(() =>
-                        {
-                            //Set tvs hide animation
-                            tvDeleteSelected.Animation = childFab_hide;
-                            tvEditSelected.Animation = childFab_hide;
-                            tvCheckAll.Animation = childFab_hide;
-                            tvUncheckAll.Animation = childFab_hide;
+                    deleteSelectedFabLayoutParams.RightMargin = deleteSelectedFabLayoutParams.RightMargin + (int)(deleteSelectedFabLayoutParams.RightMargin * .60);
+                    deleteSelectedFabLayoutParams.BottomMargin = deleteSelectedFabLayoutParams.BottomMargin * 5;
+                    deleteSelectedFab.LayoutParameters = deleteSelectedFabLayoutParams;
+                    deleteSelectedFab.Size = FabSize.Mini;
+                    deleteSelectedFab.Animation = childFab_show;
+                    deleteSelectedFab.Clickable = true;
 
-                            //Start tvs hide animation
-                            tvDeleteSelected.StartAnimation(tvDeleteSelected.Animation);
-                            tvEditSelected.StartAnimation(tvEditSelected.Animation);
-                            tvCheckAll.StartAnimation(tvCheckAll.Animation);
-                            tvUncheckAll.StartAnimation(tvUncheckAll.Animation);
+                    tvDeleteSelectedLayoutParams.RightMargin = tvDeleteSelectedLayoutParams.RightMargin + (int)(tvDeleteSelectedLayoutParams.RightMargin * 4);
+                    tvDeleteSelectedLayoutParams.BottomMargin = tvDeleteSelectedLayoutParams.BottomMargin * 5 + (int)(tvDeleteSelectedLayoutParams.BottomMargin * .4);
+                    tvDeleteSelected.LayoutParameters = tvDeleteSelectedLayoutParams;
+                    tvDeleteSelected.Animation = childFab_show;
+                    tvDeleteSelected.Clickable = true;
 
-                            //Set fabs hide animation
-                            mainFab.Animation = mainFab_hide;
-                            deleteSelectedFab.Animation = childFab_hide;
-                            editSelectedFab.Animation= childFab_hide;
-                            checkAllFab.Animation = childFab_hide;
-                            uncheckAllFab.Animation = childFab_hide;
-                            searchFab.Animation = childFab_hide;
+                    uncheckAllFabLayoutParams.RightMargin = uncheckAllFabLayoutParams.RightMargin + (int)(uncheckAllFabLayoutParams.RightMargin * .60);
+                    uncheckAllFabLayoutParams.BottomMargin = uncheckAllFabLayoutParams.BottomMargin * 8;
+                    uncheckAllFab.LayoutParameters = uncheckAllFabLayoutParams;
+                    uncheckAllFab.Size = FabSize.Mini;
+                    uncheckAllFab.Animation = childFab_show;
+                    uncheckAllFab.Clickable = true;
 
-                            //Start fabs hide animation
-                            mainFab.StartAnimation(mainFab.Animation);
-                            deleteSelectedFab.StartAnimation(deleteSelectedFab.Animation);
-                            editSelectedFab.StartAnimation(editSelectedFab.Animation);
-                            checkAllFab.StartAnimation(checkAllFab.Animation);
-                            uncheckAllFab.StartAnimation(uncheckAllFab.Animation);
-                            searchFab.StartAnimation(searchFab.Animation);
-                        });
+                    tvUncheckAllLayoutParams.RightMargin = tvUncheckAllLayoutParams.RightMargin + (int)(tvUncheckAllLayoutParams.RightMargin * 4);
+                    tvUncheckAllLayoutParams.BottomMargin = tvUncheckAllLayoutParams.BottomMargin * 8 + (int)(tvUncheckAllLayoutParams.BottomMargin * .4);
+                    tvUncheckAll.LayoutParameters = tvUncheckAllLayoutParams;
+                    tvUncheckAll.Animation = childFab_show;
+                    tvUncheckAll.Clickable = true;
 
-                        System.Threading.Thread.Sleep(500);
+                    checkAllFabLayoutParams.RightMargin = checkAllFabLayoutParams.RightMargin + (int)(checkAllFabLayoutParams.RightMargin * .60);
+                    checkAllFabLayoutParams.BottomMargin = checkAllFabLayoutParams.BottomMargin * 11;
+                    checkAllFab.LayoutParameters = checkAllFabLayoutParams;
+                    checkAllFab.Size = FabSize.Mini;
+                    checkAllFab.Animation = childFab_show;
+                    checkAllFab.Clickable = true;
 
-                        RunOnUiThread(() =>
-                        {
-                            popupMenuDialog.Dismiss();
-                        });
-                    })).Start();
-                };
+                    tvCheckAllLayoutParams.RightMargin = tvCheckAllLayoutParams.RightMargin + (int)(tvCheckAllLayoutParams.RightMargin * 4);
+                    tvCheckAllLayoutParams.BottomMargin = tvCheckAllLayoutParams.BottomMargin * 11 + (int)(tvCheckAllLayoutParams.BottomMargin * .4);
+                    tvCheckAll.LayoutParameters = tvCheckAllLayoutParams;
+                    tvCheckAll.Animation = childFab_show;
+                    tvCheckAll.Clickable = true;
+
+                    tvDeleteSelected.Tag = 1;
+                    tvCheckAll.Tag = 1;
+                    tvUncheckAll.Tag = 1;
+                    tvShowMore.Tag = 1;
+                }
+                else// if (this.listItemAdapter.getSelectedItems().Count == 1)
+                {
+                    showDetailFabLayoutParams.RightMargin = showDetailFabLayoutParams.RightMargin + (int)(showDetailFabLayoutParams.RightMargin * .60);
+                    showDetailFabLayoutParams.BottomMargin = showDetailFabLayoutParams.BottomMargin * 5;
+                    showDetailFab.LayoutParameters = showDetailFabLayoutParams;
+                    showDetailFab.Size = FabSize.Mini;
+                    showDetailFab.Animation = childFab_show;
+                    showDetailFab.Clickable = true;
+
+                    tvShowDetailLayoutParams.RightMargin = tvShowDetailLayoutParams.RightMargin + (int)(tvShowDetailLayoutParams.RightMargin * 4);
+                    tvShowDetailLayoutParams.BottomMargin = tvShowDetailLayoutParams.BottomMargin * 5 + (int)(tvShowDetailLayoutParams.BottomMargin * .4);
+                    tvShowDetail.LayoutParameters = tvShowDetailLayoutParams;
+                    tvShowDetail.Animation = childFab_show;
+                    tvShowDetail.Clickable = true;
+
+                    editSelectedFabLayoutParams.RightMargin = editSelectedFabLayoutParams.RightMargin + (int)(editSelectedFabLayoutParams.RightMargin * .60);
+                    editSelectedFabLayoutParams.BottomMargin = editSelectedFabLayoutParams.BottomMargin * 8;
+                    editSelectedFab.LayoutParameters = editSelectedFabLayoutParams;
+                    editSelectedFab.Size = FabSize.Mini;
+                    editSelectedFab.Animation = childFab_show;
+                    showDetailFab.Clickable = true;
+
+                    tvEditSelectedLayoutParams.RightMargin = tvEditSelectedLayoutParams.RightMargin + (int)(tvEditSelectedLayoutParams.RightMargin * 4);
+                    tvEditSelectedLayoutParams.BottomMargin = tvEditSelectedLayoutParams.BottomMargin * 8 + (int)(tvEditSelectedLayoutParams.BottomMargin * .4);
+                    tvEditSelected.LayoutParameters = tvEditSelectedLayoutParams;
+                    tvEditSelected.Animation = childFab_show;
+                    tvEditSelected.Clickable = true;
+
+                    deleteSelectedFabLayoutParams.RightMargin = deleteSelectedFabLayoutParams.RightMargin + (int)(deleteSelectedFabLayoutParams.RightMargin * .60);
+                    deleteSelectedFabLayoutParams.BottomMargin = deleteSelectedFabLayoutParams.BottomMargin * 11;
+                    deleteSelectedFab.LayoutParameters = deleteSelectedFabLayoutParams;
+                    deleteSelectedFab.Size = FabSize.Mini;
+                    deleteSelectedFab.Animation = childFab_show;
+                    deleteSelectedFab.Clickable = true;
+
+                    tvDeleteSelectedLayoutParams.RightMargin = tvDeleteSelectedLayoutParams.RightMargin + (int)(tvDeleteSelectedLayoutParams.RightMargin * 4);
+                    tvDeleteSelectedLayoutParams.BottomMargin = tvDeleteSelectedLayoutParams.BottomMargin * 11 + (int)(tvDeleteSelectedLayoutParams.BottomMargin * .4);
+                    tvDeleteSelected.LayoutParameters = tvDeleteSelectedLayoutParams;
+                    tvDeleteSelected.Animation = childFab_show;
+                    tvDeleteSelected.Clickable = true;
+
+                    uncheckAllFabLayoutParams.RightMargin = uncheckAllFabLayoutParams.RightMargin + (int)(uncheckAllFabLayoutParams.RightMargin * .60);
+                    uncheckAllFabLayoutParams.BottomMargin = uncheckAllFabLayoutParams.BottomMargin * 14;
+                    uncheckAllFab.LayoutParameters = uncheckAllFabLayoutParams;
+                    uncheckAllFab.Size = FabSize.Mini;
+                    uncheckAllFab.Animation = childFab_show;
+                    uncheckAllFab.Clickable = true;
+
+                    tvUncheckAllLayoutParams.RightMargin = tvUncheckAllLayoutParams.RightMargin + (int)(tvUncheckAllLayoutParams.RightMargin * 4);
+                    tvUncheckAllLayoutParams.BottomMargin = tvUncheckAllLayoutParams.BottomMargin * 14 + (int)(tvUncheckAllLayoutParams.BottomMargin * .4);
+                    tvUncheckAll.LayoutParameters = tvUncheckAllLayoutParams;
+                    tvUncheckAll.Animation = childFab_show;
+                    tvUncheckAll.Clickable = true;
+
+                    checkAllFabLayoutParams.RightMargin = checkAllFabLayoutParams.RightMargin + (int)(checkAllFabLayoutParams.RightMargin * .60);
+                    checkAllFabLayoutParams.BottomMargin = checkAllFabLayoutParams.BottomMargin * 17;
+                    checkAllFab.LayoutParameters = checkAllFabLayoutParams;
+                    checkAllFab.Size = FabSize.Mini;
+                    checkAllFab.Animation = childFab_show;
+                    checkAllFab.Clickable = true;
+
+                    tvCheckAllLayoutParams.RightMargin = tvCheckAllLayoutParams.RightMargin + (int)(tvCheckAllLayoutParams.RightMargin * 4);
+                    tvCheckAllLayoutParams.BottomMargin = tvCheckAllLayoutParams.BottomMargin * 17 + (int)(tvCheckAllLayoutParams.BottomMargin * .4);
+                    tvCheckAll.LayoutParameters = tvCheckAllLayoutParams;
+                    tvCheckAll.Animation = childFab_show;
+                    tvCheckAll.Clickable = true;
+
+                    tvDeleteSelected.Tag = 1;
+                    tvEditSelected.Tag = 1;
+                    tvCheckAll.Tag = 1;
+                    tvUncheckAll.Tag = 1;
+                    tvShowDetail.Tag = 1;
+                    tvShowMore.Tag = 1;
+                }
+
+                popupMenuView.Click += this.hidePopupMenuView_Clicked;
+                this.uncheckAllFab.Click += this.uncheckAllFab_Clicked;
+                this.checkAllFab.Click += this.checkAllFab_Clicked;
+                this.deleteSelectedFab.Click += this.deleteSelectedFab_Clicked;
+                this.editSelectedFab.Click += this.editSelectedFab_Clicked;
+                this.showDetailFab.Click += this.showDetailFab_Clicked;
+                this.mainFab.Click += this.mainFab_Clicked;
+            }
+        }
+        private double? getAverageCost(int? oldStock, int newStock, double? oldOrice, double newPrice)
+        {
+            if (oldStock < Convert.ToInt16(etStocks.Text))
+            {
+                return ((oldPrice * oldStock) + (newStock - oldStock) * newPrice) / newStock;
+            }
+            else
+            {
+                return ((oldPrice * oldStock) + (oldStock - newStock) * newPrice) / newStock;
             }
         }
         public void etPurchasedPrice_ItemChanged(object sender, View.KeyEventArgs e)
         {
             e.Handled = false;
-            if (!etPurchasedPrice.Text.Equals("") && (!etStocks.Text.Equals("")))
-                etAvarageCost.Text = etPurchasedPrice.Text;
+            if (evaluationType.Equals("Save"))
+            {
+                if (!etPurchasedPrice.Text.Equals("") && (!etStocks.Text.Equals("")))
+                    etAvarageCost.Text = etPurchasedPrice.Text;
+            }
+            else
+            {
+                if (!etPurchasedPrice.Text.Equals("") && (!etStocks.Text.Equals("")))
+                {
+                    if (Convert.ToDouble(etPurchasedPrice.Text) != oldPrice)
+                        this.getAverageCost(this.oldStock, Convert.ToInt16(etStocks.Text), this.oldPrice, Convert.ToDouble(etPurchasedPrice.Text));
+                }
+            }
         }
         public string checkIfValid(string name, string purchasedPrice, string retailPrice, string availableStocks)
         {
@@ -579,7 +1043,7 @@ namespace POSV1
             if (name.Trim().Equals("") || name == null)
                 message = "Item description is required.";
             else if (purchasedPrice.Trim().Equals("") || purchasedPrice == null)
-                message = "Purchased Price is required.";
+                message = "Cost is required.";
             else if (retailPrice.Trim().Equals("") || retailPrice == null)
                 message = "Retail Price is required.";
             else if (availableStocks.Trim().Equals("") || availableStocks == null)
@@ -589,7 +1053,7 @@ namespace POSV1
         }
         public void btnClearItem_Clicked(object sender, EventArgs e)
         {
-            this.reset();
+            this.resetItem();
         }
         public void btnEvaluateItem_Clicked(object sender, EventArgs e)
         {
@@ -603,40 +1067,149 @@ namespace POSV1
                     Item itemModel = new Item();
                     sqliteADO = new SQLiteADO();
                     //Check if Item Name and Barcode doesn't exist
-                    //Save item
-                    command = string.Format("INSERT INTO Item(Barcode, NAME, PurchasedPrice, RetailPrice, AvailableStock, AverageCost) VALUES('{0}', '{1}', {2}, {3}, {4}, {5});", etBarcode.Text, actvItemName.Text.Replace("'", "/"), Convert.ToDouble(etPurchasedPrice.Text), Convert.ToDouble(etRetailPrice.Text), Convert.ToInt16(etStocks.Text), Convert.ToDouble(etAvarageCost.Text)) + "\n";
-                    saveItem = sqliteADO.ExecuteNonQuery("BEGIN TRANSACTION;" + "\n" + command + "COMMIT;", dbPath);
-                    if (saveItem.status.Equals("SUCCESS"))
+                    if (itemModel.GetByName(actvItemName.Text, "my_store.db").param1 == 1)
                     {
-                        this.showSnackBarInfinite("Successfully Saved.");
-                        getId = itemModel.GetLastId("my_store.db");
-                        if (getId.status.Equals("SUCCESS"))
-                        {
-                            this.itemListDisplay.Add(new ListItem() { Id = getId.param1, IsChecked = false, Description = actvItemName.Text + "(" + this.etStocks.Text.ToString() + " PCS)(" + this.formatCurrency(this.etRetailPrice.Text.ToString()) + ")" });
-                            currentRetrieveItems = this.itemListDisplay.Count;
-                            this.reset();
-                            //Update list of item in ListView Adapter
-                            this.updateItemListAdapter();
-                        }
+                        this.showSnackBar("Item already exist.");
+                    }
+                    else if ((this.etBarcode.Text.Trim().Equals("") ? 0 : itemModel.GetByBarcode(this.etBarcode.Text.Trim(), "my_store.db").param1) == 1)
+                    {
+                        this.showSnackBar("Barcode already exist.");
                     }
                     else
                     {
-                        this.showMessage("Item(Insert): " + saveItem.message);
+                        //Save item
+                        command = string.Format("INSERT INTO Item(Barcode, NAME, PurchasedPrice, RetailPrice, AvailableStock, AverageCost) VALUES('{0}', '{1}', {2}, {3}, {4}, {5});", etBarcode.Text, actvItemName.Text.Replace("'", "/"), Convert.ToDouble(etPurchasedPrice.Text), Convert.ToDouble(etRetailPrice.Text), Convert.ToInt16(etStocks.Text), Convert.ToDouble(etAvarageCost.Text)) + "\n";
+                        saveItem = sqliteADO.ExecuteNonQuery("BEGIN TRANSACTION;" + "\n" + command + "COMMIT;", dbPath);
+                        if (saveItem.status.Equals("SUCCESS"))
+                        {
+                            this.showSnackBarInfinite("Successfully Saved.");
+                            getId = itemModel.GetLastId("my_store.db");
+                            if (getId.status.Equals("SUCCESS"))
+                            {
+                                this.resetItem();
+                                this.itemListDisplay.Add(new ListItem() { Id = getId.param1, IsChecked = false, Description = actvItemName.Text + "(" + this.etStocks.Text.ToString() + " PCS)(" + this.formatCurrency(this.etRetailPrice.Text.ToString()) + ")" });
+                                //Update list of item in ListView Adapter
+                                RunOnUiThread(() =>
+                                {
+                                    listItemAdapter.NotifyDataSetChanged();
+                                    currentRetrieveItems = this.itemListDisplay.Count;
+                                });
+                            }
+                        }
+                        else
+                        {
+                            this.showMessage("Item(Insert): " + saveItem.message);
+                        }
                     }
+                }
+                else //Update
+                {
+                    countDialogShown = countDialogShown + 1;
+                    var messageDialog = new AlertDialog.Builder(this);
+                    messageDialog.SetMessage("Application Message");
+                    messageDialog.SetMessage("Are you sure you want to update Item " + actvItemName.Text + "?");
+                    messageDialog.SetNegativeButton("No", delegate
+                    {
+                        this.resetItem();
+                        this.hideLayouts();
+                        evaluationType = "ShowItemList";
+                        flInvetoryList.Visibility = ViewStates.Visible;
+                        this.showOptionMenu(Resource.Id.action_more);
+                        this.showOptionMenu(Resource.Id.action_refresh);
+                    });
+                    messageDialog.SetPositiveButton("Yes", delegate
+                    {
+                        Response saveItem = new Response();
+                        Item itemModel = new Item();
+                        sqliteADO = new SQLiteADO();
+                        bool valid = true;
+                        int position = -1;
+
+                        if (!this.itemHolder.NAME.Equals(actvItemName.Text))
+                        {
+                            //Check if Item Name doesn't exist
+                            if (itemModel.GetByName(actvItemName.Text, "my_store.db").param1 == 1)
+                            {
+                                this.showSnackBar("Item already exist.");
+                                valid = false;
+                                countDialogShown = 0;
+                            }
+                        }
+                        else if (!this.itemHolder.Barcode.Equals(this.etBarcode.Text))
+                        {
+                            if ((this.etBarcode.Text.Trim().Equals("") ? 0 : itemModel.GetByBarcode(this.etBarcode.Text.Trim(), "my_store.db").param1) == 1)
+                            {
+                                this.showSnackBar("Barcode already exist.");
+                                valid = false;
+                                countDialogShown = 0;
+                            }
+                        }
+                        if (valid)
+                        {
+                            //Update item
+                            if (scannedState)
+                            {
+                                for(int i = 0; i < this.itemListDisplay.Count; i++)
+                                {
+                                    if(this.itemListDisplay[i].Id == this.itemHolder.Id)
+                                    {
+                                        position = i;
+                                        command = string.Format("UPDATE Item SET Barcode = '{0}', NAME = '{1}', PurchasedPrice = {2} , RetailPrice = {3}, AvailableStock = {4}, AverageCost = {5} WHERE Id = {6};", etBarcode.Text, actvItemName.Text.Replace("'", "/"), Convert.ToDouble(etPurchasedPrice.Text), Convert.ToDouble(etRetailPrice.Text), Convert.ToInt16(etStocks.Text), Convert.ToDouble(etAvarageCost.Text), this.itemListDisplay[i].Id) + "\n";
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                command = string.Format("UPDATE Item SET Barcode = '{0}', NAME = '{1}', PurchasedPrice = {2} , RetailPrice = {3}, AvailableStock = {4}, AverageCost = {5} WHERE Id = {6};", etBarcode.Text, actvItemName.Text.Replace("'", "/"), Convert.ToDouble(etPurchasedPrice.Text), Convert.ToDouble(etRetailPrice.Text), Convert.ToInt16(etStocks.Text), Convert.ToDouble(etAvarageCost.Text), this.listItemAdapter.getSelectedItems()[0].Id) + "\n";
+                            }
+                            
+                            saveItem = sqliteADO.ExecuteNonQuery("BEGIN TRANSACTION;" + "\n" + command + "COMMIT;", dbPath);
+                            if (saveItem.status.Equals("SUCCESS"))
+                            {
+                                if (scannedState)
+                                {
+                                    if (position != -1)
+                                    {
+                                        this.itemListDisplay[position].Description = actvItemName.Text + "(" + this.etStocks.Text.ToString() + " PCS)(" + this.formatCurrency(this.etRetailPrice.Text.ToString()) + ")";
+                                    }
+                                }
+                                else
+                                {
+                                    this.itemListDisplay[listItemAdapter.indexOfSelecteItems()[0]].Description = actvItemName.Text + "(" + this.etStocks.Text.ToString() + " PCS)(" + this.formatCurrency(this.etRetailPrice.Text.ToString()) + ")";
+                                }
+
+                                this.showSnackBar("Successfully Updated.");
+                                currentRetrieveItems = this.itemListDisplay.Count;
+                                this.resetItem();
+                                this.hideLayouts();
+                                evaluationType = "ShowItemList";
+                                flInvetoryList.Visibility = ViewStates.Visible;
+                                this.showOptionMenu(Resource.Id.action_more);
+                                this.showOptionMenu(Resource.Id.action_refresh);
+                                //Update list of item in ListView Adapter
+                                RunOnUiThread(() =>
+                                {
+                                    listItemAdapter.NotifyDataSetChanged();
+                                });
+                            }
+                            else
+                            {
+                                this.showMessage("Item(Update): " + saveItem.message);
+                            }
+                        }
+                    });
+                    if (countDialogShown == 1)//To prevent showing the dialog more than once
+                        messageDialog.Show();
                 }
             }
             else
                 this.showSnackBar(validate);
         }
-        public void updateItemListAdapter()
-        {
-            RunOnUiThread(() =>
-            {
-                listItemAdapter.NotifyDataSetChanged();
-            });
-        }
         public async void btnScanItem_Clicked()
         {
+            Item itemModel = new Item();
+            Response response = new Response();
             #if __ANDROID__
             // Initialize the scanner first so it can track the current context
             MobileBarcodeScanner.Initialize(Application);
@@ -647,7 +1220,50 @@ namespace POSV1
             var result = await scanner.Scan();
             if (result != null)
             {
+                response = itemModel.GetByBarcode(result.ToString(), "my_store.db");
+                if (response.param1 == 0)
+                {
+                    this.hideLayouts();
+                    evaluationType = "Save";
+                    btnEvaluateItem.Text = "Save";
+                    etBarcode.Text = result.ToString();
+                    glInventory.Visibility = ViewStates.Visible;
+                    this.showOptionMenu(Resource.Id.action_more);
+                    etPurchasedPrice.KeyPress += etPurchasedPrice_ItemChanged;
+                    etStocks.KeyPress += etPurchasedPrice_ItemChanged;
+                }
+                else
+                {
+                    countDialogShown = 0;
+                    evaluationType = "Update";
+                    btnEvaluateItem.Text = "Update";
+                    this.hideLayouts();
+                    this.btnEvaluateItem.Click += btnEvaluateItem_Clicked;
+                    itemHolder = response.itemList[0];
+                    etPurchasedPrice.KeyPress += etPurchasedPrice_ItemChanged;
+                    etStocks.KeyPress += etPurchasedPrice_ItemChanged;
+                    oldPrice = response.itemList[0].PurchasedPrice;
+                    oldStock = response.itemList[0].AvailableStock;
+                    this.actvItemName.Text = response.itemList[0].NAME.ToString();
+                    this.etBarcode.Text = response.itemList[0].Barcode.ToString().Trim().Equals("") ? " " : response.itemList[0].Barcode.ToString();
+                    this.etPurchasedPrice.Text = this.formatCurrency(response.itemList[0].PurchasedPrice.ToString());
+                    this.etAvarageCost.Text = this.formatCurrency(response.itemList[0].AverageCost.ToString());
+                    this.etRetailPrice.Text = this.formatCurrency(response.itemList[0].RetailPrice.ToString());
+                    this.etStocks.Text = response.itemList[0].AvailableStock.ToString();
+                    isAllowedToCloseDialog = true;
+                    glInventory.Visibility = ViewStates.Visible;
+                    this.showOptionMenu(Resource.Id.action_more);
+                }
                 mDrawerLayout.CloseDrawer(mRightDrawer);
+                scannedState = true;
+            }
+            else
+            {
+
+                evaluationType = "ShowItemList";
+                flInvetoryList.Visibility = ViewStates.Visible;
+                this.showOptionMenu(Resource.Id.action_more);
+                this.showOptionMenu(Resource.Id.action_refresh);
             }
         }
         /* ------------------------------------------END OF INVENTORY----------------------------------*/
@@ -689,32 +1305,16 @@ namespace POSV1
                 builder.Create().Show();
             }
         }
-        private void reset()
+        private void resetItem()
         {
             actvItemName.Text = "";
             etBarcode.Text = "";
             etPurchasedPrice.Text = "";
-            etAvarageCost.Text = "";
+            etAvarageCost.Text = "0.00";
             etRetailPrice.Text = "";
             etStocks.Text = "";
             oldPrice = 0.00;
             oldStock = 0;
-        }
-        public void OnScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-        {
-
-        }
-        public void OnScrollDown()
-        {
-            //throw new NotImplementedException();
-        }
-        public void OnScrollStateChanged(AbsListView view, [GeneratedEnum] ScrollState scrollState)
-        {
-
-        }
-        public void OnScrollUp()
-        {
-
         }
     }
 }

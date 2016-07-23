@@ -75,7 +75,6 @@ D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Debug\ZXingNetM
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Debug\Refractored.FloatingActionButton.pdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Debug\Refractored.FloatingActionButton.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Debug\Refractored.FloatingActionButton.dll.mdb
-D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\POSV1.csprojResolveAssemblyReference.cache
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\POSV1.dll
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\POSV1.pdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\android\bin\POSV1.POSV1.apk
@@ -116,5 +115,10 @@ D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\drawa
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\drawable\uncheck.png
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\R.cs.flag
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\uploadflags.txt
+D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\drawable\showdetail.png
+D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\drawable\textviewstyle2.xml
+D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\itemdetails.xml
+D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\drawable\textcolordarkgray.xml
+D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\POSV1.csprojResolveAssemblyReference.cache
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\POSV1.dll.mdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Debug\POSV1.dll.mdb

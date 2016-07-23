@@ -67,6 +67,50 @@ namespace POSV1.Model
 
             return response;
         }
+        public Response GetItem(int id, string dbName)
+        {
+            Response response = new Response();
+            response.status = "FAILURE";
+            var documents = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            var pathToDatabase = Path.Combine(documents, dbName);
+
+            try
+            {
+                var connectionString = String.Format("Data Source={0}", pathToDatabase);
+                using (var conn = new SqliteConnection(connectionString))
+                {
+                    conn.Open();
+                    using (var contents = conn.CreateCommand())
+                    {
+                        response.itemList = new List<Item>();
+                        contents.CommandText = string.Format("SELECT * FROM Item WHERE Id = {0}", id);
+                        var reader = contents.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            response.itemList.Add(new Item()
+                            {
+                                Id = Convert.ToInt16(reader["Id"]),
+                                Barcode = reader["Barcode"].ToString(),
+                                NAME = reader["NAME"].ToString(),
+                                PurchasedPrice = Convert.ToDouble(reader["PurchasedPrice"]),
+                                RetailPrice = Convert.ToDouble(reader["RetailPrice"]),
+                                AvailableStock = Convert.ToInt16(reader["AvailableStock"]),
+                                AverageCost = Convert.ToDouble(reader["AverageCost"])
+                            });
+                        }
+                    }
+                    conn.Close();
+                }
+                response.status = "SUCCESS";
+            }
+            catch
+            {
+                response.message = "Item: Error getting items.";
+            }
+
+            return response;
+        }
         public Response GetItemCount(string dbName)
         {
             Response response = new Response();
@@ -122,6 +166,85 @@ namespace POSV1.Model
                         while (reader.Read())
                         {
                             response.param1 = Convert.ToInt16(reader["Id"]);
+                        }
+                    }
+                    conn.Close();
+                }
+                response.status = "SUCCESS";
+            }
+            catch
+            {
+                response.message = "Item: Error getting item count.";
+            }
+
+            return response;
+        }
+        public Response GetByName(string name, string dbName)
+        {
+            Response response = new Response();
+            response.status = "FAILURE";
+            var documents = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            var pathToDatabase = Path.Combine(documents, dbName);
+
+            try
+            {
+                var connectionString = String.Format("Data Source={0}", pathToDatabase);
+                using (var conn = new SqliteConnection(connectionString))
+                {
+                    conn.Open();
+                    using (var contents = conn.CreateCommand())
+                    {
+                        contents.CommandText = string.Format("SELECT * FROM Item WHERE NAME = '{0}';",name);
+                        var reader = contents.ExecuteReader();
+                        response.param1 = 0;
+                        while (reader.Read())
+                        {
+                            response.param1 = 1;
+                        }
+                    }
+                    conn.Close();
+                }
+                response.status = "SUCCESS";
+            }
+            catch
+            {
+                response.message = "Item: Error getting item count.";
+            }
+
+            return response;
+        }
+        public Response GetByBarcode(string name, string dbName)
+        {
+            Response response = new Response();
+            response.status = "FAILURE";
+            var documents = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            var pathToDatabase = Path.Combine(documents, dbName);
+
+            try
+            {
+                var connectionString = String.Format("Data Source={0}", pathToDatabase);
+                using (var conn = new SqliteConnection(connectionString))
+                {
+                    conn.Open();
+                    using (var contents = conn.CreateCommand())
+                    {
+                        contents.CommandText = string.Format("SELECT * FROM Item WHERE Barcode = '{0}';", name);
+                        var reader = contents.ExecuteReader();
+                        response.param1 = 0;
+                        while (reader.Read())
+                        {
+                            response.param1 = 1;
+                            response.itemList = new List<Item>();
+                            response.itemList.Add(new Item()
+                            {
+                                Id = Convert.ToInt16(reader["Id"]),
+                                Barcode = reader["Barcode"].ToString(),
+                                NAME = reader["NAME"].ToString(),
+                                PurchasedPrice = Convert.ToDouble(reader["PurchasedPrice"]),
+                                RetailPrice = Convert.ToDouble(reader["RetailPrice"]),
+                                AvailableStock = Convert.ToInt16(reader["AvailableStock"]),
+                                AverageCost = Convert.ToDouble(reader["AverageCost"])
+                            });
                         }
                     }
                     conn.Close();

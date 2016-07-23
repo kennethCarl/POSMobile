@@ -136,7 +136,8 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp">
+                    android:layout_margin="10dp"
+                    android:theme="@style/TextLabel1">
                     <AutoCompleteTextView
                         android:id="@+id/atcvDescription"
                         android:layout_width="fill_parent"
@@ -147,7 +148,8 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp">
+                    android:layout_margin="10dp"
+                    android:theme="@style/TextLabel1">
                     <EditText
                         android:id="@+id/etBarcode"
                         android:layout_width="fill_parent"
@@ -157,7 +159,8 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp">
+                    android:layout_margin="10dp"
+                    android:theme="@style/TextLabel1">
                     <EditText
                         android:id="@+id/etPurchasedPrice"
                         android:layout_width="fill_parent"
@@ -168,20 +171,23 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp">
+                    android:layout_margin="10dp"
+                    android:theme="@style/TextLabel1">
                     <EditText
                         android:id="@+id/etAverageCost"
                         android:inputType="numberDecimal"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Average Cost Per Item"
+                        android:hint="Average Cost Per Item(Auto-Calculated)"
+                        android:textColor="@drawable/TextColorDarkGray"
                         android:enabled="false"
                         android:text="0.00" />
                 </android.support.design.widget.TextInputLayout>
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp">
+                    android:layout_margin="10dp"
+                    android:theme="@style/TextLabel1">
                     <EditText
                         android:id="@+id/etRetailPrice"
                         android:inputType="numberDecimal"
@@ -192,7 +198,8 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp">
+                    android:layout_margin="10dp"
+                    android:theme="@style/TextLabel1">
                     <EditText
                         android:id="@+id/etAvailableStocks"
                         android:inputType="number"

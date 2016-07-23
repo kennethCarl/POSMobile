@@ -4,6 +4,18 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <TextView
+        android:text="Indicator"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_gravity="top"
+        android:layout_margin="16dp"
+        android:visibility="invisible"
+        android:id="@+id/tvIndicator"
+        android:textColor="#eeeeee"
+        android:background="@drawable/TextViewStyle2"
+        android:gravity="center" />
     <com.refractored.fab.FloatingActionButton
         android:id="@+id/mainFab"
         android:layout_width="wrap_content"
@@ -14,25 +26,38 @@
         app:fab_colorNormal="#00bcd4"
         app:fab_colorPressed="#03a9f4"
         app:fab_colorRipple="#bdbdbd" />
-    <com.refractored.fab.FloatingActionButton
-        android:id="@+id/deleteSelectedFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:src="@drawable/Delete"
-        android:visibility="invisible"
-        app:fab_colorNormal="#f44336"
-        app:fab_colorPressed="#e53935"
-        app:fab_colorRipple="#bdbdbd" />
     <TextView
-        android:text="Delete Selected Item"
+        android:text="Show More Items"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:id="@+id/tvDeleteSelected"
+        android:visibility="invisible"
+        android:id="@+id/tvShowMore"
+        android:textColor="#616161"
+        android:background="@drawable/TextViewStyle1"
+        android:gravity="center" />
+    <com.refractored.fab.FloatingActionButton
+        android:id="@+id/showDetailFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ShowDetail"
+        android:visibility="invisible"
+        app:fab_colorNormal="#e64a19"
+        app:fab_colorPressed="#ef6c00"
+        app:fab_colorRipple="#e65100" />
+    <TextView
+        android:text="Display Item Details"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:visibility="invisible"
+        android:id="@+id/tvShowDetail"
         android:textColor="#616161"
         android:background="@drawable/TextViewStyle1"
         android:gravity="center" />
@@ -48,13 +73,37 @@
         app:fab_colorPressed="#ffea00"
         app:fab_colorRipple="#bdbdbd" />
     <TextView
-        android:text="Edit Item"
+        android:text="Edit Selected Item"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:id="@+id/tvEditSelected"
+        android:visibility="invisible"
+        android:textColor="#616161"
+        android:background="@drawable/TextViewStyle1"
+        android:gravity="center" />
+    <com.refractored.fab.FloatingActionButton
+        android:id="@+id/deleteSelectedFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/Delete"
+        android:visibility="invisible"
+        app:fab_colorNormal="#f44336"
+        app:fab_colorPressed="#e53935"
+        app:fab_colorRipple="#bdbdbd" />
+    <TextView
+        android:text="Delete Selected Item/s"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:id="@+id/tvDeleteSelected"
+        android:visibility="invisible"
         android:textColor="#616161"
         android:background="@drawable/TextViewStyle1"
         android:gravity="center" />
@@ -78,6 +127,7 @@
         android:layout_margin="16dp"
         android:id="@+id/tvUncheckAll"
         android:textColor="#616161"
+        android:visibility="invisible"
         android:background="@drawable/TextViewStyle1"
         android:gravity="center" />
     <com.refractored.fab.FloatingActionButton
@@ -98,19 +148,9 @@
         android:layout_height="30dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        android:visibility="invisible"
         android:id="@+id/tvCheckAll"
         android:textColor="#616161"
         android:background="@drawable/TextViewStyle1"
         android:gravity="center" />
-    <com.refractored.fab.FloatingActionButton
-        android:id="@+id/searchFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:src="@drawable/Search"
-        android:visibility="invisible"
-        app:fab_colorNormal="#3f51b5"
-        app:fab_colorPressed="#3949ab"
-        app:fab_colorRipple="#bdbdbd" />
 </FrameLayout>

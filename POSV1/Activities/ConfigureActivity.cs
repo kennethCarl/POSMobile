@@ -54,7 +54,6 @@ namespace POSV1
             lvConfigure.Adapter = new ConfigureAdapter(this, items);
             lvConfigure.ChoiceMode = ChoiceMode.Multiple;
 
-            fab.AttachToListView(lvConfigure, this, this);
             fab.Click += fab_Clicked;
         }
         public void fab_Clicked(object sender, EventArgs e)

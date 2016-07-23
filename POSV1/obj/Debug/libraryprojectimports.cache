@@ -2,22 +2,22 @@
 <Paths>
   <Jars></Jars>
   <ResolvedResourceDirectories>
-    <ResolvedResourceDirectory>D:\Carl\Projects\Personal\Mobile Development\POSV1\POSV1\obj\Debug\__library_projects__\Refractored.FloatingActionButton\library_project_imports\res</ResolvedResourceDirectory>
-    <ResolvedResourceDirectory>D:\Carl\Projects\Personal\Mobile Development\POSV1\POSV1\obj\Debug\__library_projects__\System.Data.Portable\library_project_imports\res</ResolvedResourceDirectory>
-    <ResolvedResourceDirectory>D:\Carl\Projects\Personal\Mobile Development\POSV1\POSV1\obj\Debug\__library_projects__\System.Transactions.Portable\library_project_imports\res</ResolvedResourceDirectory>
-    <ResolvedResourceDirectory>D:\Carl\Projects\Personal\Mobile Development\POSV1\POSV1\obj\Debug\__library_projects__\ZXingNetMobile\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\__library_projects__\Refractored.FloatingActionButton\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\__library_projects__\System.Data.Portable\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\__library_projects__\System.Transactions.Portable\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\__library_projects__\ZXingNetMobile\library_project_imports\res</ResolvedResourceDirectory>
   </ResolvedResourceDirectories>
   <ResolvedAssetDirectories>
-    <ResolvedAssetDirectory>D:\Carl\Projects\Personal\Mobile Development\POSV1\POSV1\obj\Debug\__library_projects__\Refractored.FloatingActionButton\library_project_imports\assets</ResolvedAssetDirectory>
-    <ResolvedAssetDirectory>D:\Carl\Projects\Personal\Mobile Development\POSV1\POSV1\obj\Debug\__library_projects__\System.Data.Portable\library_project_imports\assets</ResolvedAssetDirectory>
-    <ResolvedAssetDirectory>D:\Carl\Projects\Personal\Mobile Development\POSV1\POSV1\obj\Debug\__library_projects__\System.Transactions.Portable\library_project_imports\assets</ResolvedAssetDirectory>
-    <ResolvedAssetDirectory>D:\Carl\Projects\Personal\Mobile Development\POSV1\POSV1\obj\Debug\__library_projects__\ZXingNetMobile\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\__library_projects__\Refractored.FloatingActionButton\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\__library_projects__\System.Data.Portable\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\__library_projects__\System.Transactions.Portable\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\__library_projects__\ZXingNetMobile\library_project_imports\assets</ResolvedAssetDirectory>
   </ResolvedAssetDirectories>
   <ResolvedEnvironmentFiles />
   <ResolvedResourceDirectoryStamps>
-    <ResolvedResourceDirectoryStamp>D:\Carl\Projects\Personal\Mobile Development\POSV1\POSV1\obj\Debug\__library_projects__\Refractored.FloatingActionButton.stamp</ResolvedResourceDirectoryStamp>
-    <ResolvedResourceDirectoryStamp>D:\Carl\Projects\Personal\Mobile Development\POSV1\POSV1\obj\Debug\__library_projects__\System.Data.Portable.stamp</ResolvedResourceDirectoryStamp>
-    <ResolvedResourceDirectoryStamp>D:\Carl\Projects\Personal\Mobile Development\POSV1\POSV1\obj\Debug\__library_projects__\System.Transactions.Portable.stamp</ResolvedResourceDirectoryStamp>
-    <ResolvedResourceDirectoryStamp>D:\Carl\Projects\Personal\Mobile Development\POSV1\POSV1\obj\Debug\__library_projects__\ZXingNetMobile.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\__library_projects__\Refractored.FloatingActionButton.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\__library_projects__\System.Data.Portable.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\__library_projects__\System.Transactions.Portable.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\__library_projects__\ZXingNetMobile.stamp</ResolvedResourceDirectoryStamp>
   </ResolvedResourceDirectoryStamps>
 </Paths>
