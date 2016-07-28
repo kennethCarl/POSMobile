@@ -72,7 +72,7 @@ namespace POSV1
                             {
                                 this.progressBar.Progress += 15;
                                 this.progressBar.SetMessage("Creating SaleMaster Table...");
-                                createTable = sqliteADO.CreateTable("CREATE TABLE SaleMaster (Id INTEGER PRIMARY KEY AUTOINCREMENT, SalesDateTime TEXT, Amount REAL);", dbPath);
+                                createTable = sqliteADO.CreateTable("CREATE TABLE SaleMaster (Id INTEGER PRIMARY KEY AUTOINCREMENT, SalesDateTime TEXT, Amount REAL, SoldBy TEXT, SoldTo TEXT);", dbPath);
                                 if (createTable.status.Equals("SUCCESS"))
                                 {
                                     this.progressBar.Progress += 15;

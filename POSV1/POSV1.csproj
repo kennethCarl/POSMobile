@@ -48,13 +48,9 @@
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-    <AndroidLinkSkip />
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
-    <BundleAssemblies>False</BundleAssemblies>
+    <BundleAssemblies>True</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
-    <AndroidSupportedAbis>armeabi,armeabi-v7a,x86,x86_64,arm64-v8a</AndroidSupportedAbis>
-    <AndroidStoreUncompressedFileExtensions />
-    <MandroidI18n />
     <Debugger>Xamarin</Debugger>
     <AotAssemblies>False</AotAssemblies>
     <EnableLLVM>False</EnableLLVM>
@@ -106,10 +102,10 @@
   <ItemGroup>
     <Compile Include="Activities\ConfigureActivity.cs" />
     <Compile Include="Activities\PreMainActivity.cs" />
-    <Compile Include="Activities\SalesActivity.cs" />
     <Compile Include="CustomeClasses\AppActionBarDrawerToggle.cs" />
     <Compile Include="CustomeClasses\ConfigureAdapter.cs" />
     <Compile Include="CustomeClasses\ConfigureItem.cs" />
+    <Compile Include="CustomeClasses\DatePickerFragment .cs" />
     <Compile Include="CustomeClasses\LeftDrawerAdapter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -118,6 +114,7 @@
     <Compile Include="CustomeClasses\RightDrawerAdapter.cs" />
     <Compile Include="CustomeClasses\TableItem.cs" />
     <Compile Include="Activities\MainActivity.cs" />
+    <Compile Include="CustomeClasses\TimePickerFragment.cs" />
     <Compile Include="Model\Configuration.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -125,9 +122,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Model\SaleDetail.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Model\SaleDetailWithItem.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Model\SaleMaster.cs">
@@ -144,9 +138,6 @@
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <AndroidResource Include="Resources\layout\LeftDrawerRowLayout.axml" />
-    <AndroidResource Include="Resources\layout\Sales.axml">
-      <SubType>AndroidResource</SubType>
-    </AndroidResource>
     <AndroidResource Include="Resources\layout\PreMain.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
@@ -157,7 +148,7 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\PopupMenu.axml">
-      <SubType>AndroidResource</SubType>
+      <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\childFab_show.axml">
       <SubType>AndroidResource</SubType>
@@ -181,9 +172,30 @@
     <AndroidResource Include="Resources\drawable\TextColorDarkGray.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\SalesMainPopupMenu.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\DynamicPopupMenu.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\LoaderLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\loader_show.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\loader_hide.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\CartItemDetail.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\FromToDate_Popup.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\Main.axml" />
+    <AndroidResource Include="Resources\layout\Main.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\Strings.xml" />
@@ -261,6 +273,21 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ShowDetail.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\AddWhite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\SelectDate.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\Report.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ScanWhite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\Loader.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets" Condition="Exists('..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" />

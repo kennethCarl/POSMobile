@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/AddEditCart">
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:rowCount="5"
+            android:columnCount="1">
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:theme="@style/TextLabel1">
+                <AutoCompleteTextView
+                    android:id="@+id/atcvSalesItemDescription"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Item Description"
+                    android:capitalize="characters"
+                    android:textSize="15sp"
+                    android:enabled="false"
+                    android:textColor="@drawable/TextColorDarkGray" />
+            </android.support.design.widget.TextInputLayout>
+          <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:theme="@style/TextLabel1">
+                <EditText
+                    android:id="@+id/etSalesBarcode"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Barcode"
+                    android:enabled="false"
+                    android:textSize="15sp"
+                    android:textColor="@drawable/TextColorDarkGray"/>
+              </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:theme="@style/TextLabel1">
+                <EditText
+                    android:id="@+id/etSalesQuantity"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Quantity"
+                    android:inputType="number"
+                    android:textSize="15sp"
+                    android:enabled="false"
+                    android:textColor="@drawable/TextColorDarkGray" />
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:theme="@style/TextLabel1">
+                <EditText
+                    android:id="@+id/etSalesRetailPrice"
+                    android:inputType="numberDecimal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Retail Price"
+                    android:textColor="@drawable/TextColorDarkGray"
+                    android:enabled="false"
+                    android:text="0.00"
+                    android:textSize="15sp" />
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:theme="@style/TextLabel1">
+                <EditText
+                    android:id="@+id/etSalesTotalPrice"
+                    android:inputType="numberDecimal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@drawable/TextColorDarkGray"
+                    android:enabled="false"
+                    android:hint="Total Price"
+                    android:text="0.00"
+                    android:textSize="15sp" />
+            </android.support.design.widget.TextInputLayout>
+        </GridLayout>
+    </ScrollView>
+</LinearLayout>

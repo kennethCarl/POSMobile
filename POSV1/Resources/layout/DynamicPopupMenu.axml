@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+  <TextView
+      android:hint="Indicator"
+      android:textAppearance="?android:attr/textAppearanceSmall"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="top"
+      android:layout_margin="16dp"
+      android:visibility="invisible"
+      android:id="@+id/tvIndicator"
+      android:textColor="#eeeeee"
+      android:background="@drawable/TextViewStyle2"
+      android:gravity="center" />
+  <!-- MAIN FAB -->
+  <com.refractored.fab.FloatingActionButton
+      android:id="@+id/mainFab"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|right"
+      android:src="@drawable/More"
+      android:layout_margin="16dp"
+      app:fab_colorNormal="#00bcd4"
+      app:fab_colorPressed="#03a9f4"
+      app:fab_colorRipple="#bdbdbd" />
+  <!-- MAIN FAB LABEL-->
+  <TextView
+      android:text="Main Fab Label"
+      android:textAppearance="?android:attr/textAppearanceSmall"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:visibility="invisible"
+      android:id="@+id/tvMainFab"
+      android:textColor="#616161"
+      android:background="@drawable/TextViewStyle1"
+      android:gravity="center" />
+  <!-- SEARCH FAB-->
+  <com.refractored.fab.FloatingActionButton
+      android:id="@+id/searchFab"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:src="@drawable/Search"
+      android:visibility="invisible"
+      app:fab_colorNormal="#283593"
+      app:fab_colorPressed="#1a237e"
+      app:fab_colorRipple="#bdbdbd" />
+  <!-- SEARCH FAB Edit Text(Should be Visible always so that it can be edit)-->
+  <EditText
+      android:hint="Search Fab Hint"
+      android:textAppearance="?android:attr/textAppearanceSmall"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:id="@+id/etSearchFab"
+      android:textColor="#616161"
+      android:capitalize="characters"
+      android:background="@drawable/TextViewStyle1"
+      android:gravity="center" />
+  <!-- CHILD FAB1-->
+  <com.refractored.fab.FloatingActionButton
+      android:id="@+id/childFab1"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:visibility="invisible"
+      app:fab_colorNormal="#e64a19"
+      app:fab_colorPressed="#ef6c00"
+      app:fab_colorRipple="#e65100" />
+  <!-- CHILD FAB1 LABEL-->
+  <TextView
+      android:text="Child Fab 1 Label"
+      android:textAppearance="?android:attr/textAppearanceSmall"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:visibility="invisible"
+      android:id="@+id/tvChildFab1"
+      android:textColor="#616161"
+      android:background="@drawable/TextViewStyle1"
+      android:gravity="center" />
+  <!-- CHILD FAB2-->
+  <com.refractored.fab.FloatingActionButton
+      android:id="@+id/childFab2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:visibility="invisible"
+      app:fab_colorNormal="#ffff00"
+      app:fab_colorPressed="#ffea00"
+      app:fab_colorRipple="#bdbdbd" />
+  <!-- CHILD FAB2 LABEL-->
+  <TextView
+      android:text="Child Fab 2 Label"
+      android:textAppearance="?android:attr/textAppearanceSmall"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:id="@+id/tvChildFab2"
+      android:visibility="invisible"
+      android:textColor="#616161"
+      android:background="@drawable/TextViewStyle1"
+      android:gravity="center" />
+  <!-- CHILD FAB3-->
+  <com.refractored.fab.FloatingActionButton
+      android:id="@+id/childFab3"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:visibility="invisible"
+      app:fab_colorNormal="#f44336"
+      app:fab_colorPressed="#e53935"
+      app:fab_colorRipple="#bdbdbd" />
+  <!-- CHILD FAB3 LABEL-->
+  <TextView
+      android:text="Child Fab 3 Label"
+      android:textAppearance="?android:attr/textAppearanceSmall"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:id="@+id/tvChildFab3"
+      android:visibility="invisible"
+      android:textColor="#616161"
+      android:background="@drawable/TextViewStyle1"
+      android:gravity="center" />
+  <!-- CHILD FAB4-->
+  <com.refractored.fab.FloatingActionButton
+      android:id="@+id/childFab4"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:visibility="invisible"
+      app:fab_colorNormal="#26a69a"
+      app:fab_colorPressed="#009688"
+      app:fab_colorRipple="#bdbdbd" />
+  <!-- CHILD FAB4 LABEL-->
+  <TextView
+      android:text="Child Fab 4 Label"
+      android:textAppearance="?android:attr/textAppearanceSmall"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:id="@+id/tvChildFab4"
+      android:textColor="#616161"
+      android:visibility="invisible"
+      android:background="@drawable/TextViewStyle1"
+      android:gravity="center" />
+  <!-- CHILD FAB5-->
+  <com.refractored.fab.FloatingActionButton
+      android:id="@+id/childFab5"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:visibility="invisible"
+      app:fab_colorNormal="#76ff03"
+      app:fab_colorPressed="#64dd17"
+      app:fab_colorRipple="#bdbdbd" />
+  <!-- CHILD FAB5 LABEL-->
+  <TextView
+      android:text="Child Fab5 Label"
+      android:textAppearance="?android:attr/textAppearanceSmall"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:visibility="invisible"
+      android:id="@+id/tvChildFab5"
+      android:textColor="#616161"
+      android:background="@drawable/TextViewStyle1"
+      android:gravity="center" />
+</FrameLayout>

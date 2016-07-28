@@ -6,7 +6,8 @@ public abstract class RecyclerViewScrollDetector
 	implements
 		mono.android.IGCUserPeer
 {
-	static final String __md_methods;
+/** @hide */
+	public static final String __md_methods;
 	static {
 		__md_methods = 
 			"n_onScrolled:(Landroid/support/v7/widget/RecyclerView;II)V:GetOnScrolled_Landroid_support_v7_widget_RecyclerView_IIHandler\n" +
@@ -39,7 +40,7 @@ public abstract class RecyclerViewScrollDetector
 
 	private native void n_onScrollStateChanged (android.support.v7.widget.RecyclerView p0, int p1);
 
-	java.util.ArrayList refList;
+	private java.util.ArrayList refList;
 	public void monodroidAddReference (java.lang.Object obj)
 	{
 		if (refList == null)

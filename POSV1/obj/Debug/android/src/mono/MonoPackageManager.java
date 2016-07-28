@@ -17,10 +17,20 @@ public class MonoPackageManager {
 	static Object lock = new Object ();
 	static boolean initialized;
 
+	static android.content.Context Context;
+
 	public static void LoadApplication (Context context, ApplicationInfo runtimePackage, String[] apks)
 	{
 		synchronized (lock) {
+			if (context instanceof android.app.Application) {
+				Context = context;
+			}
 			if (!initialized) {
+				android.content.IntentFilter timezoneChangedFilter  = new android.content.IntentFilter (
+						android.content.Intent.ACTION_TIMEZONE_CHANGED
+				);
+				context.registerReceiver (new mono.android.app.NotifyTimeZoneChanges (), timezoneChangedFilter);
+				
 				System.loadLibrary("monodroid");
 				Locale locale       = Locale.getDefault ();
 				String language     = locale.getLanguage () + "-" + locale.getCountry ();
@@ -44,9 +54,17 @@ public class MonoPackageManager {
 							"Android/data/" + context.getPackageName () + "/files/.__override__").getAbsolutePath (),
 						MonoPackageManager_Resources.Assemblies,
 						context.getPackageName ());
+				
+				mono.android.app.ApplicationRegistration.registerApplications ();
+				
 				initialized = true;
 			}
 		}
+	}
+
+	public static void setContext (Context context)
+	{
+		// Ignore; vestigial
 	}
 
 	static String getNativeLibraryPath (Context context)
@@ -79,7 +97,9 @@ public class MonoPackageManager {
 
 class MonoPackageManager_Resources {
 	public static final String[] Assemblies = new String[]{
+		/* We need to ensure that "POSV1.dll" comes first in this list. */
 		"POSV1.dll",
+		"Java.Interop.dll",
 		"Refractored.FloatingActionButton.dll",
 		"System.Data.Portable.dll",
 		"System.Transactions.Portable.dll",
@@ -90,12 +110,6 @@ class MonoPackageManager_Resources {
 		"ZXing.Net.Mobile.Core.dll",
 		"zxing.portable.dll",
 		"ZXingNetMobile.dll",
-		"System.Diagnostics.Tracing.dll",
-		"System.Reflection.Emit.dll",
-		"System.Reflection.Emit.ILGeneration.dll",
-		"System.Reflection.Emit.Lightweight.dll",
-		"System.ServiceModel.Security.dll",
-		"System.Threading.Timer.dll",
 		"System.ServiceModel.Internals.dll",
 	};
 	public static final String[] Dependencies = new String[]{

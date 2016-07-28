@@ -6,7 +6,8 @@ public class AppActionBarDrawerToggle
 	implements
 		mono.android.IGCUserPeer
 {
-	static final String __md_methods;
+/** @hide */
+	public static final String __md_methods;
 	static {
 		__md_methods = 
 			"n_onDrawerOpened:(Landroid/view/View;)V:GetOnDrawerOpened_Landroid_view_View_Handler\n" +
@@ -56,7 +57,7 @@ public class AppActionBarDrawerToggle
 
 	private native void n_onDrawerSlide (android.view.View p0, float p1);
 
-	java.util.ArrayList refList;
+	private java.util.ArrayList refList;
 	public void monodroidAddReference (java.lang.Object obj)
 	{
 		if (refList == null)

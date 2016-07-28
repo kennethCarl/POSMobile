@@ -6,7 +6,8 @@ public class FloatingActionButton_MyOutlineProvider
 	implements
 		mono.android.IGCUserPeer
 {
-	static final String __md_methods;
+/** @hide */
+	public static final String __md_methods;
 	static {
 		__md_methods = 
 			"n_getOutline:(Landroid/view/View;Landroid/graphics/Outline;)V:GetGetOutline_Landroid_view_View_Landroid_graphics_Outline_Handler\n" +
@@ -37,7 +38,7 @@ public class FloatingActionButton_MyOutlineProvider
 
 	private native void n_getOutline (android.view.View p0, android.graphics.Outline p1);
 
-	java.util.ArrayList refList;
+	private java.util.ArrayList refList;
 	public void monodroidAddReference (java.lang.Object obj)
 	{
 		if (refList == null)

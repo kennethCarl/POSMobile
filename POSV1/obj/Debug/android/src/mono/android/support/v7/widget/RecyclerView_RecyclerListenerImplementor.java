@@ -7,7 +7,8 @@ public class RecyclerView_RecyclerListenerImplementor
 		mono.android.IGCUserPeer,
 		android.support.v7.widget.RecyclerView.RecyclerListener
 {
-	static final String __md_methods;
+/** @hide */
+	public static final String __md_methods;
 	static {
 		__md_methods = 
 			"n_onViewRecycled:(Landroid/support/v7/widget/RecyclerView$ViewHolder;)V:GetOnViewRecycled_Landroid_support_v7_widget_RecyclerView_ViewHolder_Handler:Android.Support.V7.Widget.RecyclerView/IRecyclerListenerInvoker, Xamarin.Android.Support.v7.RecyclerView\n" +
@@ -31,7 +32,7 @@ public class RecyclerView_RecyclerListenerImplementor
 
 	private native void n_onViewRecycled (android.support.v7.widget.RecyclerView.ViewHolder p0);
 
-	java.util.ArrayList refList;
+	private java.util.ArrayList refList;
 	public void monodroidAddReference (java.lang.Object obj)
 	{
 		if (refList == null)

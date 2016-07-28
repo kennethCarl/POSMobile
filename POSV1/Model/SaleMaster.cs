@@ -9,6 +9,8 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using System.IO;
+using Mono.Data.Sqlite;
 //using SQLite;
 
 namespace POSV1.Model
@@ -16,172 +18,90 @@ namespace POSV1.Model
     class SaleMaster
     {
         //[PrimaryKey, AutoIncrement]
-        public int ID { get; set; }
-        public DateTime DATE { get; set; }
-        public double AMOUNT { get; set; }
-        //public Response insertData(SaleMaster data, string path)
-        //{
-        //    Response response = new Response();
-        //    response.status = "FAILURE";
-        //    try
-        //    {
-        //        //var db = new SQLite.SQLiteAsyncConnection(path);
-        //        //db.InsertAsync(data);
-        //        //response.status = "SUCCESS";
-        //        using (var conn = new SQLite.SQLiteConnection(path))
-        //        {
-        //            var cmd = new SQLite.SQLiteCommand(conn);
-        //            cmd.CommandText = string.Format("INSERT INTO SaleMaster VALUES({0}, '{1}', {2})", data.ID, data.DATE.ToString("yyyy-MM-dd HH:mm:ss"), data.AMOUNT);
-        //            response.saleList = cmd.ExecuteQuery<SaleMaster>();
-        //            response.status = "SUCCESS";
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        response.message = "Error inserting data";
-        //    }
-        //    return response;
-        //}
-        //public Response updateData(SaleMaster data, string path)
-        //{
-        //    Response response = new Response();
-        //    response.status = "FAILURE";
-        //    try
-        //    {
-        //        using (var conn = new SQLite.SQLiteConnection(path))
-        //        {
-        //            var cmd = new SQLite.SQLiteCommand(conn);
-        //            cmd.CommandText = string.Format("UPDATE SaleMaster SET DATE = '{0}', AMOUNT = {1} WHERE ID = {2}", data.DATE.ToString("yyyy-MM-dd HH:mm:ss"), data.AMOUNT, data.ID);
-        //            response.saleList = cmd.ExecuteQuery<SaleMaster>();
-        //            response.status = "SUCCESS";
-        //        }
-        //    }
-        //    catch(Exception e)
-        //    {
-        //        response.message = "Error updating data";
-        //    }
-        //    return response;
-        //}
-        //public Response deleteData(SaleMaster data, string path)
-        //{
-        //    Response response = new Response();
-        //    response.status = "FAILURE";
-        //    try
-        //    {
-        //        using (var conn = new SQLite.SQLiteConnection(path))
-        //        {
-        //            var cmd = new SQLite.SQLiteCommand(conn);
-        //            cmd.CommandText = string.Format("DELETE FROM SaleMaster WHERE ID = {0}", data.ID);
-        //            response.saleList = cmd.ExecuteQuery<SaleMaster>();
-        //            response.status = "SUCCESS";
-        //        }
-        //        response.status = "SUCCESS";
-        //    }
-        //    catch
-        //    {
-        //        response.message = "Error deleting data";
-        //    }
-        //    return response;
-        //}
-        //public Response findData(int id, string path)
-        //{
-        //    Response response = new Response();
-        //    response.status = "FAILURE";
-        //    try
-        //    {
-        //        using (var conn = new SQLite.SQLiteConnection(path))
-        //        {
-        //            var cmd = new SQLite.SQLiteCommand(conn);
-        //            cmd.CommandText = "select * from SaleMaster where ID = " + id;
-        //            response.saleList = cmd.ExecuteQuery<SaleMaster>();
-        //            response.status = "SUCCESS";
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        response.message = "Error retrieving data";
-        //    }
-        //    return response;
-        //}
-        //public Response getData(string dbPath)
-        //{
-        //    Response response = new Response();
-        //    response.status = "FAILURE";
-        //    try
-        //    {
-        //        using (var conn = new SQLite.SQLiteConnection(dbPath))
-        //        {
-        //            var cmd = new SQLite.SQLiteCommand(conn);
-        //            cmd.CommandText = "select * from SaleMaster";
-        //            response.saleList = cmd.ExecuteQuery<SaleMaster>();
-        //            response.status = "SUCCESS";
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        response.message = "Error retrieving data";
-        //    }
-        //    return response;
-        //}
-        //public Response getDetail(int id, string dbPath)
-        //{
-        //    Response response = new Response();
-        //    response.status = "FAILURE";
-        //    try
-        //    {
-        //        using (var conn = new SQLite.SQLiteConnection(dbPath))
-        //        {
-        //            var cmd = new SQLite.SQLiteCommand(conn);
-        //            cmd.CommandText = string.Format("SELECT * FROM SaleDetail WHERE SALEID = {0}", id);
-        //            response.saleDetailList = cmd.ExecuteQuery<SaleDetail>();
-        //            response.status = "SUCCESS";
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        response.message = "Error retrieving data";
-        //    }
-        //    return response;
-        //}
-        //public Response getId(string dbPath)
-        //{
-        //    Response response = new Response();
-        //    response.status = "FAILURE";
-        //    try
-        //    {
-        //        using (var conn = new SQLite.SQLiteConnection(dbPath))
-        //        {
-        //            var cmd = new SQLite.SQLiteCommand(conn);
-        //            cmd.CommandText = "SELECT * FROM SaleMaster ORDER BY ID DESC LIMIT 1";
-        //            response.saleList = cmd.ExecuteQuery<SaleMaster>();
-        //            response.status = "SUCCESS";
-        //        }
-        //    }
-        //    catch(Exception e)
-        //    {
-        //        response.message = "Error generating sales ID.";
-        //    }
-        //    return response;
-        //}
-        //public Response getDetailWithItem(int id, string dbPath)
-        //{
-        //    Response response = new Response();
-        //    response.status = "FAILURE";
-        //    try
-        //    {
-        //        using (var conn = new SQLite.SQLiteConnection(dbPath))
-        //        {
-        //            var cmd = new SQLite.SQLiteCommand(conn);
-        //            cmd.CommandText = string.Format("SELECT SaleDetail.*, Item.NAME, Item.RETAILPRICE FROM SaleDetail INNER JOIN Item ON SaleDetail.ITEMID = Item.ID  WHERE SaleDetail.SALEID = {0}", id);
-        //            response.saleDetailWithItemList = cmd.ExecuteQuery<SaleDetailWithItem>();
-        //            response.status = "SUCCESS";
-        //        }
-        //    }
-        //    catch(Exception e)
-        //    {
-        //        response.message = "Error retrieving data";
-        //    }
-        //    return response;
-        //}
+        public int Id { get; set; }
+        public DateTime SalesDateTime { get; set; }
+        public double Amount { get; set; }
+        public string SoldBy { get; set; }
+        public string SoldTo { get; set; }
+        public Response getSalesByDate(DateTime date, string dbName)
+        {
+            Response response = new Response();
+            response.status = "FAILURE";
+            var documents = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            var pathToDatabase = Path.Combine(documents, dbName);
+
+            try
+            {
+                var connectionString = String.Format("Data Source={0}", pathToDatabase);
+                using (var conn = new SqliteConnection(connectionString))
+                {
+                    conn.Open();
+                    using (var contents = conn.CreateCommand())
+                    {
+                        contents.CommandText = string.Format("SELECT SaleMaster.SalesDateTime, SUM(SaleMaster.Amount) AS TotalAmount, COUNT(DISTINCT SaleDetail.ItemId) AS NoOfItemsSold, COUNT(DISTINCT SaleMaster.Id) AS NoOfSales FROM SaleMaster INNER JOIN SaleDetail ON SaleMaster.Id = SaleDetail.SaleMasterId WHERE SaleMaster.SalesDateTime BETWEEN datetime('{0}') AND datetime('{1}') LIMIT 1;", date.ToString("yyyy-MM-dd") + " 00:00:00", date.ToString("yyyy-MM-dd") + " 23:59:59");
+
+                        var reader = contents.ExecuteReader();
+
+                        response.param1 = 0;
+                        response.param2 = 0;
+                        response.dblParam1 = 0.00;
+                        while (reader.Read())
+                        {
+                            object xx = new object();
+                            xx = reader["TotalAmount"];
+                            if (reader["TotalAmount"] != System.DBNull.Value)
+                            {
+                                response.dblParam1 = Convert.ToDouble(reader["TotalAmount"]);
+                                response.param1 = Convert.ToInt16(reader["NoOfItemsSold"]);
+                                response.param2 = Convert.ToInt16(reader["NoOfSales"]);
+                            }
+                        }
+                    }
+                    conn.Close();
+                }
+                response.status = "SUCCESS";
+            }
+            catch(Exception e)
+            {
+                response.message = "Sales(Select): An error has occured.";
+            }
+
+            return response;
+        }
+        public Response getLastId(string dbName)
+        {
+            Response response = new Response();
+            response.status = "FAILURE";
+            var documents = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            var pathToDatabase = Path.Combine(documents, dbName);
+
+            try
+            {
+                var connectionString = String.Format("Data Source={0}", pathToDatabase);
+                using (var conn = new SqliteConnection(connectionString))
+                {
+                    conn.Open();
+                    using (var contents = conn.CreateCommand())
+                    {
+                        contents.CommandText = string.Format("SELECT * FROM SQLITE_SEQUENCE WHERE name = 'SaleMaster';");
+                        var reader = contents.ExecuteReader();
+
+                        response.param1 = 0;
+                        while (reader.Read())
+                        {
+                            response.param1 = Convert.ToInt16(reader["seq"]);
+                        }
+                    }
+                    conn.Close();
+                }
+                response.status = "SUCCESS";
+            }
+            catch (Exception e)
+            {
+                response.message = "Sales(Select): An error has occured.";
+            }
+
+            return response;
+        }
     }
 }

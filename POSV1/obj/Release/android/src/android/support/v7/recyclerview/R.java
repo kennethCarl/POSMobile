@@ -2305,8 +2305,8 @@ containing a value of this type.
         public static int action_mode_bar=0x7f060057;
         public static int action_mode_bar_stub=0x7f060056;
         public static int action_mode_close_button=0x7f06003c;
-        public static int action_more=0x7f0600b0;
-        public static int action_refresh=0x7f0600af;
+        public static int action_more=0x7f0600af;
+        public static int action_refresh=0x7f0600ae;
         public static int activity_chooser_view_content=0x7f06003d;
         public static int alertTitle=0x7f060049;
         public static int always=0x7f06001d;
@@ -2317,10 +2317,9 @@ containing a value of this type.
         public static int btnButton2=0x7f0600ab;
         public static int btnClearItem=0x7f06008c;
         public static int btnEvaluateItem=0x7f06008b;
-        public static int btnScan=0x7f0600ac;
         public static int buttonPanel=0x7f060044;
         public static int cancel_action=0x7f060090;
-        public static int cb=0x7f0600ad;
+        public static int cb=0x7f0600ac;
         public static int center=0x7f06002b;
         public static int center_horizontal=0x7f06002c;
         public static int center_vertical=0x7f06002d;
@@ -2330,7 +2329,7 @@ containing a value of this type.
         public static int clip_horizontal=0x7f060033;
         public static int clip_vertical=0x7f060034;
         public static int collapseActionView=0x7f06001e;
-        public static int contentFrame=0x7f0600ae;
+        public static int contentFrame=0x7f0600ad;
         public static int contentPanel=0x7f06004a;
         public static int custom=0x7f060050;
         public static int customPanel=0x7f06004f;
@@ -2525,14 +2524,13 @@ containing a value of this type.
         public static int notification_template_part_time=0x7f030033;
         public static int popupmenu=0x7f030034;
         public static int premain=0x7f030035;
-        public static int sales=0x7f030036;
-        public static int select_dialog_item_material=0x7f030037;
-        public static int select_dialog_multichoice_material=0x7f030038;
-        public static int select_dialog_singlechoice_material=0x7f030039;
-        public static int support_simple_spinner_dropdown_item=0x7f03003a;
-        public static int withcheckboxrowlayout=0x7f03003b;
-        public static int zxingscanneractivitylayout=0x7f03003c;
-        public static int zxingscannerfragmentlayout=0x7f03003d;
+        public static int select_dialog_item_material=0x7f030036;
+        public static int select_dialog_multichoice_material=0x7f030037;
+        public static int select_dialog_singlechoice_material=0x7f030038;
+        public static int support_simple_spinner_dropdown_item=0x7f030039;
+        public static int withcheckboxrowlayout=0x7f03003a;
+        public static int zxingscanneractivitylayout=0x7f03003b;
+        public static int zxingscannerfragmentlayout=0x7f03003c;
     }
     public static final class menu {
         public static int action_menu=0x7f0c0000;

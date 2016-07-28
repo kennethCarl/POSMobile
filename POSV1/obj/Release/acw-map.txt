@@ -6,10 +6,6 @@ POSV1.PreMainActivity, POSV1;md5718af39fa154ec8f2b1a0282db7f814a.PreMainActivity
 POSV1.PreMainActivity, POSV1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md5718af39fa154ec8f2b1a0282db7f814a.PreMainActivity
 POSV1.PreMainActivity;md5718af39fa154ec8f2b1a0282db7f814a.PreMainActivity
 posv1.PreMainActivity;md5718af39fa154ec8f2b1a0282db7f814a.PreMainActivity
-POSV1.SalesActivity, POSV1;md5718af39fa154ec8f2b1a0282db7f814a.SalesActivity
-POSV1.SalesActivity, POSV1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md5718af39fa154ec8f2b1a0282db7f814a.SalesActivity
-POSV1.SalesActivity;md5718af39fa154ec8f2b1a0282db7f814a.SalesActivity
-posv1.SalesActivity;md5718af39fa154ec8f2b1a0282db7f814a.SalesActivity
 POSV1.AppActionBarDrawerToggle, POSV1;md5718af39fa154ec8f2b1a0282db7f814a.AppActionBarDrawerToggle
 POSV1.AppActionBarDrawerToggle, POSV1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md5718af39fa154ec8f2b1a0282db7f814a.AppActionBarDrawerToggle
 POSV1.AppActionBarDrawerToggle;md5718af39fa154ec8f2b1a0282db7f814a.AppActionBarDrawerToggle

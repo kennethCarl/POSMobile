@@ -7,7 +7,8 @@ public abstract class AbsListViewScrollDetector
 		mono.android.IGCUserPeer,
 		android.widget.AbsListView.OnScrollListener
 {
-	static final String __md_methods;
+/** @hide */
+	public static final String __md_methods;
 	static {
 		__md_methods = 
 			"n_onScroll:(Landroid/widget/AbsListView;III)V:GetOnScroll_Landroid_widget_AbsListView_IIIHandler:Android.Widget.AbsListView/IOnScrollListenerInvoker, Mono.Android, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null\n" +
@@ -40,7 +41,7 @@ public abstract class AbsListViewScrollDetector
 
 	private native void n_onScrollStateChanged (android.widget.AbsListView p0, int p1);
 
-	java.util.ArrayList refList;
+	private java.util.ArrayList refList;
 	public void monodroidAddReference (java.lang.Object obj)
 	{
 		if (refList == null)
