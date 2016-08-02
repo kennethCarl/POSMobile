@@ -27,11 +27,11 @@
                     android:enabled="false"
                     android:textColor="@drawable/TextColorDarkGray" />
             </android.support.design.widget.TextInputLayout>
-          <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:theme="@style/TextLabel1">
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:theme="@style/TextLabel1">
                 <EditText
                     android:id="@+id/etSalesBarcode"
                     android:layout_width="fill_parent"
@@ -39,8 +39,8 @@
                     android:hint="Barcode"
                     android:enabled="false"
                     android:textSize="15sp"
-                    android:textColor="@drawable/TextColorDarkGray"/>
-              </android.support.design.widget.TextInputLayout>
+                    android:textColor="@drawable/TextColorDarkGray" />
+            </android.support.design.widget.TextInputLayout>
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

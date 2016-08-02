@@ -96,6 +96,30 @@
                 app:fab_colorPressed="#03a9f4"
                 app:fab_colorRipple="#bdbdbd" />
         </FrameLayout>
+    <!--Main Sales Summary List  Content-->
+        <FrameLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/SalesSummary"
+            android:visibility="gone">
+            <ListView
+                android:minWidth="25px"
+                android:minHeight="25px"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/lvSalesSummary" />
+            <com.refractored.fab.FloatingActionButton
+                android:id="@+id/salesSummaryMainFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:layout_margin="16dp"
+                android:src="@drawable/More"
+                app:fab_colorNormal="#00bcd4"
+                app:fab_colorPressed="#03a9f4"
+                app:fab_colorRipple="#bdbdbd" />
+        </FrameLayout>
     <!--Add/Edit Sales Content-->
         <FrameLayout
             android:layout_width="match_parent"
@@ -108,7 +132,7 @@
                 <GridLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:rowCount="6"
+                    android:rowCount="8"
                     android:columnCount="1">
                     <TextView
                         android:id="@+id/tvSalesTime"
@@ -132,6 +156,20 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="15dp"
                         android:layout_marginRight="20dp"
+                        android:theme="@style/TextLabel1">
+                        <EditText
+                            android:id="@+id/etVendor"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Vendor"
+                            android:capitalize="characters"
+                            android:textSize="15sp" />
+                    </android.support.design.widget.TextInputLayout>
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="20dp"
                         android:layout_marginTop="5dp"
                         android:theme="@style/TextLabel1">
                         <EditText
@@ -147,15 +185,26 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="15dp"
                         android:layout_marginRight="20dp"
+                        android:layout_marginTop="5dp"
                         android:theme="@style/TextLabel1">
                         <EditText
-                            android:id="@+id/etVendor"
+                            android:id="@+id/etAmountReceived"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Vendor"
+                            android:hint="Amount Received"
                             android:capitalize="characters"
-                            android:textSize="15sp" />
+                            android:textSize="15sp"
+                            android:text="0.00"
+                            android:inputType="number" />
                     </android.support.design.widget.TextInputLayout>
+                    <TextView
+                        android:id="@+id/tvChange"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Change:"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:textColor="#333"
+                        android:textSize="15sp" />
                     <Button
                         android:text="Evaluate"
                         android:layout_width="match_parent"
@@ -176,7 +225,7 @@
                         android:layout_marginRight="20dp" />
                 </GridLayout>
             </ScrollView>
-            <com.refractored.fab.FloatingActionButton
+        <!--<com.refractored.fab.FloatingActionButton
                 android:id="@+id/fabMainAddEditSales"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -185,7 +234,7 @@
                 android:src="@drawable/More"
                 app:fab_colorNormal="#00bcd4"
                 app:fab_colorPressed="#03a9f4"
-                app:fab_colorRipple="#bdbdbd" />
+                app:fab_colorRipple="#bdbdbd" />-->
         </FrameLayout>
     <!-- Cart Content-->
         <FrameLayout
@@ -234,22 +283,22 @@
                         android:hint="Item Description"
                         android:capitalize="characters"
                         android:textSize="15sp"
-                        android:textColor="@drawable/TextColorDarkGray"/>
+                        android:textColor="@drawable/TextColorDarkGray" />
                 </android.support.design.widget.TextInputLayout>
-              <android.support.design.widget.TextInputLayout
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:theme="@style/TextLabel1">
-                <EditText
-                    android:id="@+id/etSalesBarcode"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Barcode"
-                    android:enabled="false"
-                    android:textSize="15sp"
-                    android:textColor="@drawable/TextColorDarkGray"/>
-              </android.support.design.widget.TextInputLayout>
+                    <EditText
+                        android:id="@+id/etSalesBarcode"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Barcode"
+                        android:enabled="false"
+                        android:textSize="15sp"
+                        android:textColor="@drawable/TextColorDarkGray" />
+                </android.support.design.widget.TextInputLayout>
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -21,6 +21,7 @@ namespace POSV1.Model
         public int Id { get; set; }
         public DateTime SalesDateTime { get; set; }
         public double Amount { get; set; }
+        public double AmountReceived { get; set; }
         public string SoldBy { get; set; }
         public string SoldTo { get; set; }
         public Response getSalesByDate(DateTime date, string dbName)
@@ -38,7 +39,16 @@ namespace POSV1.Model
                     conn.Open();
                     using (var contents = conn.CreateCommand())
                     {
-                        contents.CommandText = string.Format("SELECT SaleMaster.SalesDateTime, SUM(SaleMaster.Amount) AS TotalAmount, COUNT(DISTINCT SaleDetail.ItemId) AS NoOfItemsSold, COUNT(DISTINCT SaleMaster.Id) AS NoOfSales FROM SaleMaster INNER JOIN SaleDetail ON SaleMaster.Id = SaleDetail.SaleMasterId WHERE SaleMaster.SalesDateTime BETWEEN datetime('{0}') AND datetime('{1}') LIMIT 1;", date.ToString("yyyy-MM-dd") + " 00:00:00", date.ToString("yyyy-MM-dd") + " 23:59:59");
+                        contents.CommandText = string.Format("SELECT SaleMaster.SalesDateTime " +
+                                            ", (SELECT SUM(Amount) FROM SaleMaster WHERE SalesDateTime BETWEEN datetime('{0}') AND datetime('{1}')) AS TotalAmount " +
+                                            ", COUNT(DISTINCT SaleDetail.ItemId) AS NoOfItemsSold " +
+                                            ", COUNT(DISTINCT SaleMaster.Id) AS NoOfSales " +
+                                            " FROM SaleMaster INNER JOIN SaleDetail ON SaleMaster.Id = SaleDetail.SaleMasterId " +
+                                            " WHERE SaleMaster.SalesDateTime BETWEEN datetime('{2}') AND datetime('{3}') LIMIT 1; "
+                        , date.ToString("yyyy-MM-dd") + " 00:00:00"
+                        , date.ToString("yyyy-MM-dd") + " 23:59:59"
+                        , date.ToString("yyyy-MM-dd") + " 00:00:00"
+                        , date.ToString("yyyy-MM-dd") + " 23:59:59");
 
                         var reader = contents.ExecuteReader();
 

@@ -18,13 +18,13 @@ typedef struct _compressed_data {
 } CompressedAssembly;
 
 extern const unsigned char assembly_data_POSV1_dll [];
-static CompressedAssembly assembly_bundle_POSV1_dll = {{"POSV1.dll", assembly_data_POSV1_dll, 135168}, 46933};
+static CompressedAssembly assembly_bundle_POSV1_dll = {{"POSV1.dll", assembly_data_POSV1_dll, 188928}, 61542};
 extern const unsigned char assembly_data_Java_Interop_dll [];
-static CompressedAssembly assembly_bundle_Java_Interop_dll = {{"Java.Interop.dll", assembly_data_Java_Interop_dll, 92160}, 27383};
+static CompressedAssembly assembly_bundle_Java_Interop_dll = {{"Java.Interop.dll", assembly_data_Java_Interop_dll, 92160}, 27418};
 extern const unsigned char assembly_data_Refractored_FloatingActionButton_dll [];
-static CompressedAssembly assembly_bundle_Refractored_FloatingActionButton_dll = {{"Refractored.FloatingActionButton.dll", assembly_data_Refractored_FloatingActionButton_dll, 19456}, 8181};
+static CompressedAssembly assembly_bundle_Refractored_FloatingActionButton_dll = {{"Refractored.FloatingActionButton.dll", assembly_data_Refractored_FloatingActionButton_dll, 19456}, 8179};
 extern const unsigned char assembly_data_System_Data_Portable_dll [];
-static CompressedAssembly assembly_bundle_System_Data_Portable_dll = {{"System.Data.Portable.dll", assembly_data_System_Data_Portable_dll, 14336}, 4104};
+static CompressedAssembly assembly_bundle_System_Data_Portable_dll = {{"System.Data.Portable.dll", assembly_data_System_Data_Portable_dll, 14336}, 4103};
 extern const unsigned char assembly_data_System_Transactions_Portable_dll [];
 static CompressedAssembly assembly_bundle_System_Transactions_Portable_dll = {{"System.Transactions.Portable.dll", assembly_data_System_Transactions_Portable_dll, 12800}, 3493};
 extern const unsigned char assembly_data_Xamarin_Android_Support_Design_dll [];
@@ -38,31 +38,31 @@ static CompressedAssembly assembly_bundle_Xamarin_Android_Support_v7_RecyclerVie
 extern const unsigned char assembly_data_ZXing_Net_Mobile_Core_dll [];
 static CompressedAssembly assembly_bundle_ZXing_Net_Mobile_Core_dll = {{"ZXing.Net.Mobile.Core.dll", assembly_data_ZXing_Net_Mobile_Core_dll, 12800}, 5146};
 extern const unsigned char assembly_data_zxing_portable_dll [];
-static CompressedAssembly assembly_bundle_zxing_portable_dll = {{"zxing.portable.dll", assembly_data_zxing_portable_dll, 444416}, 202886};
+static CompressedAssembly assembly_bundle_zxing_portable_dll = {{"zxing.portable.dll", assembly_data_zxing_portable_dll, 444416}, 202887};
 extern const unsigned char assembly_data_ZXingNetMobile_dll [];
 static CompressedAssembly assembly_bundle_ZXingNetMobile_dll = {{"ZXingNetMobile.dll", assembly_data_ZXingNetMobile_dll, 35328}, 16603};
 extern const unsigned char assembly_data_System_ServiceModel_Internals_dll [];
 static CompressedAssembly assembly_bundle_System_ServiceModel_Internals_dll = {{"System.ServiceModel.Internals.dll", assembly_data_System_ServiceModel_Internals_dll, 227840}, 86208};
 extern const unsigned char assembly_data_Mono_Android_dll [];
-static CompressedAssembly assembly_bundle_Mono_Android_dll = {{"Mono.Android.dll", assembly_data_Mono_Android_dll, 1204224}, 308542};
+static CompressedAssembly assembly_bundle_Mono_Android_dll = {{"Mono.Android.dll", assembly_data_Mono_Android_dll, 1246720}, 315986};
 extern const unsigned char assembly_data_Mono_Data_Sqlite_dll [];
 static CompressedAssembly assembly_bundle_Mono_Data_Sqlite_dll = {{"Mono.Data.Sqlite.dll", assembly_data_Mono_Data_Sqlite_dll, 141824}, 44827};
 extern const unsigned char assembly_data_mscorlib_dll [];
-static CompressedAssembly assembly_bundle_mscorlib_dll = {{"mscorlib.dll", assembly_data_mscorlib_dll, 2013184}, 682133};
+static CompressedAssembly assembly_bundle_mscorlib_dll = {{"mscorlib.dll", assembly_data_mscorlib_dll, 2013184}, 682089};
 extern const unsigned char assembly_data_System_Core_dll [];
-static CompressedAssembly assembly_bundle_System_Core_dll = {{"System.Core.dll", assembly_data_System_Core_dll, 40448}, 19185};
+static CompressedAssembly assembly_bundle_System_Core_dll = {{"System.Core.dll", assembly_data_System_Core_dll, 40448}, 19186};
 extern const unsigned char assembly_data_System_Data_dll [];
-static CompressedAssembly assembly_bundle_System_Data_dll = {{"System.Data.dll", assembly_data_System_Data_dll, 646144}, 240259};
+static CompressedAssembly assembly_bundle_System_Data_dll = {{"System.Data.dll", assembly_data_System_Data_dll, 646144}, 240257};
 extern const unsigned char assembly_data_System_dll [];
-static CompressedAssembly assembly_bundle_System_dll = {{"System.dll", assembly_data_System_dll, 736256}, 283124};
+static CompressedAssembly assembly_bundle_System_dll = {{"System.dll", assembly_data_System_dll, 736256}, 283121};
 extern const unsigned char assembly_data_System_Transactions_dll [];
-static CompressedAssembly assembly_bundle_System_Transactions_dll = {{"System.Transactions.dll", assembly_data_System_Transactions_dll, 14336}, 6130};
+static CompressedAssembly assembly_bundle_System_Transactions_dll = {{"System.Transactions.dll", assembly_data_System_Transactions_dll, 14336}, 6129};
 extern const unsigned char assembly_data_System_Xml_dll [];
-static CompressedAssembly assembly_bundle_System_Xml_dll = {{"System.Xml.dll", assembly_data_System_Xml_dll, 1010176}, 357954};
+static CompressedAssembly assembly_bundle_System_Xml_dll = {{"System.Xml.dll", assembly_data_System_Xml_dll, 1010176}, 357955};
 extern const unsigned char assembly_data_System_Runtime_Serialization_dll [];
 static CompressedAssembly assembly_bundle_System_Runtime_Serialization_dll = {{"System.Runtime.Serialization.dll", assembly_data_System_Runtime_Serialization_dll, 6144}, 2220};
 extern const unsigned char assembly_data_System_Numerics_dll [];
-static CompressedAssembly assembly_bundle_System_Numerics_dll = {{"System.Numerics.dll", assembly_data_System_Numerics_dll, 23040}, 10511};
+static CompressedAssembly assembly_bundle_System_Numerics_dll = {{"System.Numerics.dll", assembly_data_System_Numerics_dll, 23040}, 10512};
 
 static const CompressedAssembly *compressed [] = {
 	&assembly_bundle_POSV1_dll,

@@ -21,11 +21,13 @@ namespace POSV1.CustomeClasses
         public string Minutes;
         // Initialize this value to prevent NullReferenceExceptions.
         Action<DateTime> _timeSelectedHandler = delegate { };
-
-        public static TimePickerFragment NewInstance(Action<DateTime> onTimeSelected)
+        Action<DateTime> _timeCanceledHandler = delegate { };
+        public bool isTimeSet = false;
+        public static TimePickerFragment NewInstance(Action<DateTime> onTimeSelected, Action<DateTime> onTimeCancel)
         {
             TimePickerFragment frag = new TimePickerFragment();
             frag._timeSelectedHandler = onTimeSelected;
+            frag._timeCanceledHandler = onTimeCancel;
             return frag;
         }
 
@@ -38,7 +40,7 @@ namespace POSV1.CustomeClasses
                                                            currentDateTime.Minute,
                                                            false);
 
-            dialog.SetCancelable(false);
+            this.isTimeSet = false;
             return dialog;
         }
 
@@ -46,7 +48,19 @@ namespace POSV1.CustomeClasses
         {
             // Note: monthOfYear is a value between 0 and 11, not 1 and 12!
             DateTime selectedDate = new DateTime(currentDateTime.Year, currentDateTime.Month, currentDateTime.Day, hour, minutes, 0);
+            this.isTimeSet = true;
             _timeSelectedHandler(selectedDate);
+        }
+        public override void OnCancel(IDialogInterface dialog)
+        {
+            DateTime selectedDate = new DateTime(currentDateTime.Year, currentDateTime.Month, currentDateTime.Day, currentDateTime.Hour, currentDateTime.Minute, 0);
+            _timeCanceledHandler(selectedDate);
+        }
+        public override void OnDismiss(IDialogInterface dialog)
+        {
+            if (!this.isTimeSet)
+                this.OnCancel(dialog);
+            base.OnDismiss(dialog);
         }
     }
 }

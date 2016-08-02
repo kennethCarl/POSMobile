@@ -9,6 +9,8 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using System.IO;
+using Mono.Data.Sqlite;
 //using SQLite;
 
 namespace POSV1.Model
@@ -23,5 +25,7 @@ namespace POSV1.Model
         public string ItemName { get; set; }
         public string Barcode { get; set; }
         public double? RetailPrice { get; set; }
+        public string SalesDateTime {get; set;}
+
     }
 }

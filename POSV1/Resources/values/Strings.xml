@@ -5,6 +5,8 @@
     <string name="LeftDrawerDescWhenOpen">What to choose?</string>
     <string name="LeftDrawerDescWhenClose">My Store</string>
     <string name="Sales">Sales</string>
+    <string name="SalesList">List of Sales</string>
+    <string name="CartList">Items In Cart</string>
     <string name="Inventory">Inventory</string>
     <string name="Help">Help</string>
 </resources>

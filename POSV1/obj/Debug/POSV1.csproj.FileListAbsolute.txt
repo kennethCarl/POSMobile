@@ -15,7 +15,6 @@ D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Debug\ZXingNetM
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Debug\Refractored.FloatingActionButton.pdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Debug\Refractored.FloatingActionButton.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Debug\Refractored.FloatingActionButton.dll.mdb
-D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\POSV1.csprojResolveAssemblyReference.cache
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\POSV1.dll
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\POSV1.pdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\android\bin\POSV1.POSV1.apk
@@ -38,6 +37,7 @@ D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layou
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\loader_show.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\loader_hide.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\cartitemdetail.xml
+D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\fromtodate_popup.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\main.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\values\strings.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\drawable\icon.png
@@ -68,6 +68,7 @@ D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\drawa
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\drawable\report.png
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\drawable\scanwhite.png
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\drawable\loader.png
+D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\drawable\cart.png
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\R.cs.flag
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\uploadflags.txt
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Debug\POSV1.dll.mdb
@@ -105,6 +106,7 @@ D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\android\a
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\android\assets\System.Transactions.dll.mdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\android\assets\System.Xml.dll.mdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\android\assets\System.Xml.Linq.dll.mdb
-D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\fromtodate_popup.xml
+D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\POSV1.csprojResolveAssemblyReference.cache
+D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\addeditcartdetail.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\POSV1.dll.mdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Debug\POSV1.dll.mdb

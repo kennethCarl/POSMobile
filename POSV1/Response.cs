@@ -25,5 +25,6 @@ namespace POSV1
         public List<Item> itemList;
         public List<SaleMaster> saleList;
         public List<SaleDetail> saleDetailList;
+        public List<SalesSummary> salesSummary;
     }
 }
