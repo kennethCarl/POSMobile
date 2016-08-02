@@ -38,6 +38,7 @@ D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layou
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\loader_hide.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\cartitemdetail.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\fromtodate_popup.xml
+D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\addeditcartdetail.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\main.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\values\strings.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\drawable\icon.png
@@ -106,7 +107,5 @@ D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\android\a
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\android\assets\System.Transactions.dll.mdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\android\assets\System.Xml.dll.mdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\android\assets\System.Xml.Linq.dll.mdb
-D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\POSV1.csprojResolveAssemblyReference.cache
-D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\res\layout\addeditcartdetail.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Debug\POSV1.dll.mdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Debug\POSV1.dll.mdb

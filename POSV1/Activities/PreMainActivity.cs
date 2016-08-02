@@ -154,7 +154,7 @@ namespace POSV1
                     }
                 }
             }
-            catch
+            catch(Exception e)
             {
                 this.showMessage("An error has occured in creating database.");
             }

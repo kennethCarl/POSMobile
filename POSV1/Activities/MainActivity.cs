@@ -1745,12 +1745,92 @@ namespace POSV1
         }
         public void deleteSelectedSaleInSummaryFab_Clicked(object sender, EventArgs e)
         {
+            if (this.hasAction)
+                return;
+            
+            if (this.salesSummaryListAdapter.getSelectedItems().Count == 0)
+            {
+                tvIndicator.Text = "No sale selected.";
+                return;
+            }
+            int count = 0;
+            List<ListItem> saleSummaryListCopy = new List<ListItem>();
+            Response getSaleDetail = new Response();
+            SalesSummary saleDetail = new SalesSummary();
+            Response deleteSale = new Response();
+
+            this.hasAction = true;
+
+            var builder = new AlertDialog.Builder(this);
+            builder.SetTitle("Application Message");
+            builder.SetMessage("Are you sure you want to delete selected sale/s?");
+            builder.SetPositiveButton("Yes", delegate
+            {
+                this.invokeLoader();
+                tvIndicator.Visibility = ViewStates.Visible;
+                isAllowedToCloseDialog = false;
+                saleSummaryListCopy = this.salesSummaryListDisplay;
+                command = "";
+                foreach (ListItem salesSummaryModel in this.salesSummaryListAdapter.getSelectedItems())
+                {
+                    count = count + 1;
+                    command += string.Format("DELETE FROM SaleMaster WHERE Id = {0};", salesSummaryModel.Id) + "\n";
+                    getSaleDetail = saleDetail.getSaleById(salesSummaryModel.Id, "my_store.db");
+                    if (getSaleDetail.status.Equals("SUCCESS"))
+                    {
+                        foreach (SalesSummary saleSummary in getSaleDetail.salesSummary)
+                        {
+                            command += string.Format("DELETE FROM SaleDetail WHERE SaleMasterId = {0};", saleSummary.SaleMasterId) + "\n";
+                            command += string.Format("UPDATE Item SET AvailableStock = {0} WHERE Id = {1};"
+                                , saleSummary.AvailableStock + saleSummary.Quantity
+                                , saleSummary.ItemId) + "\n";
+                        }
+                    }
+                    else
+                    {
+                        this.isAllowedToCloseDialog = true;
+                        this.salesSummaryListDisplay = saleSummaryListCopy;
+                        this.tvIndicator.Text = "SaleDetail(Delete): " + getSaleDetail.message;
+                        break;
+                    }
+
+                    this.salesSummaryListDisplay.Remove(salesSummaryModel);
+                }
+                sqliteADO = new SQLiteADO();
+
+                deleteSale = sqliteADO.ExecuteNonQuery("BEGIN TRANSACTION;" + "\n" + command + "COMMIT;", dbPath);
+                if (deleteSale.status.Equals("SUCCESS"))
+                {
+                    this.hideLoader();
+                    this.hasAction = false;
+                    this.tvIndicator.Text = count.ToString() + " sale/s have been deleted.";
+                }
+                else
+                {
+                    this.tvIndicator.Text = "Sale(Delete): " + deleteSale.message;
+                    this.isAllowedToCloseDialog = true;
+                }
+
+                RunOnUiThread(() =>
+                {
+                    if (salesSummaryListAdapter != null)
+                        salesSummaryListAdapter.NotifyDataSetChanged();
+                });
+            });
+            builder.SetNegativeButton("No", delegate { this.tvIndicator.Text = "Tap blank space to go back in the list."; this.hasAction = false; });
+            builder.Create().Show();
 
         }
         public void editSelectedSaleInSummaryFab_Clicked(object sender, EventArgs e)
         {
             if (this.hasAction)
                 return;
+
+            if (this.salesSummaryListAdapter.getSelectedItems().Count == 0)
+            {
+                tvIndicator.Text = "No sale selected.";
+                return;
+            }
 
             this.hasAction = true;
             this.invokeLoader();
@@ -1815,6 +1895,15 @@ namespace POSV1
         }
         public void displaySaleDetailInSummaryFab_Clicked(object sender, EventArgs e)
         {
+            if (this.hasAction)
+                return;
+
+            if (this.salesSummaryListAdapter.getSelectedItems().Count == 0)
+            {
+                tvIndicator.Text = "No sale selected.";
+                return;
+            }
+
             this.hasAction = true;
             this.invokeLoader();
             Response getSaleDetail = new Response();
@@ -1833,7 +1922,7 @@ namespace POSV1
                 
                 view.FindViewById<TextView>(Resource.Id.tvSalesTime).Text = string.Format("Time: {0}", getSaleDetail.salesSummary[0].SalesDateTime.ToString("hh:mm tt"));
                 view.FindViewById<TextView>(Resource.Id.tvTotalAmount).Text = string.Format("Total Amount: {0}", this.formatCurrency(getSaleDetail.salesSummary[0].Amount.ToString()));
-                view.FindViewById<EditText>(Resource.Id.etAmountReceived).Text = string.Format("Total Amount: {0}", this.formatCurrency(getSaleDetail.salesSummary[0].AmountReceived.ToString()));
+                view.FindViewById<EditText>(Resource.Id.etAmountReceived).Text = this.formatCurrency(getSaleDetail.salesSummary[0].AmountReceived.ToString());
                 view.FindViewById<EditText>(Resource.Id.etConsumer).Text = getSaleDetail.salesSummary[0].SoldTo.ToString();
                 view.FindViewById<EditText>(Resource.Id.etVendor).Text = getSaleDetail.salesSummary[0].SoldBy.ToString();
                 view.FindViewById<TextView>(Resource.Id.tvChange).Text = string.Format("Change: {0}", this.formatCurrency((getSaleDetail.salesSummary[0].AmountReceived - getSaleDetail.salesSummary[0].Amount).ToString()));
@@ -1913,6 +2002,12 @@ namespace POSV1
             if (this.hasAction)
                 return;
 
+            if (this.cartListAdapter.getSelectedItems().Count == 0)
+            {
+                tvIndicator.Text = "No item selected.";
+                return;
+            }
+
             this.hasAction = true;
             Item itemModel = new Item();
             Response response = new Response();
@@ -1944,6 +2039,12 @@ namespace POSV1
             if (this.hasAction)
                 return;
 
+            if (this.cartListAdapter.getSelectedItems().Count == 0)
+            {
+                tvIndicator.Text = "No item selected.";
+                return;
+            }
+
             this.hasAction = true;
 
             for(int i = 0; i< this.itemCartList.Count; i++)
@@ -1969,6 +2070,15 @@ namespace POSV1
         }
         public void deleteSelectedSaleInCartFab_Clicked(object sender, EventArgs e)
         {
+            if (this.hasAction)
+                return;
+
+            if (this.cartListAdapter.getSelectedItems().Count == 0)
+            {
+                tvIndicator.Text = "No item selected.";
+                return;
+            }
+
             int count = 0;
             string firstItem = "";
             tvIndicator.Text = "Preparing for delete...";
@@ -2024,7 +2134,7 @@ namespace POSV1
             }
             else
             {
-                tvIndicator.Text = "No sale selected.";
+                tvIndicator.Text = "No item selected.";
             }
         }
         public void unCheckAllSaleInCartFab_Clicked(object sender, EventArgs e)
@@ -3123,6 +3233,8 @@ namespace POSV1
             if (this.hasAction)
                 return;
 
+            if (listItemAdapter.getSelectedItems().Count == 0)
+                return;
 
             int count = 0;
             string firstItem = "";
@@ -3144,7 +3256,7 @@ namespace POSV1
                     foreach (ListItem listItem in listItemAdapter.getSelectedItems())
                     {
                         tvIndicator.Text = string.Format("Preparing in deleting {0}...", listItem.Description.Split('(')[0]);
-                        command += string.Format("DELETE FROM Item WHERE Id = {0};", listItem.Id);
+                        command += string.Format("DELETE FROM Item WHERE Id = {0} AND (SELECT COUNT(Id) FROM Sale) = 0;", listItem.Id);
                         firstItem = listItem.Description.Split('(')[0];
                         deletedItems.Add(listItem);
                         this.itemListDisplay.Remove(listItem);
@@ -3193,6 +3305,9 @@ namespace POSV1
             if (this.hasAction)
                 return;
 
+            if (listItemAdapter.getSelectedItems().Count == 0)
+                return;
+
             this.hasAction = true;
 
             Item itemModel = new Item();
@@ -3234,6 +3349,9 @@ namespace POSV1
         public void showDetailFab_Clicked(object sender, EventArgs e)
         {
             if (this.hasAction)
+                return;
+
+            if (listItemAdapter.getSelectedItems().Count == 0)
                 return;
 
             this.hasAction = true;
