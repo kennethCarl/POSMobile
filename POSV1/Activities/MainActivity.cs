@@ -25,6 +25,8 @@ using Android.Views.Animations;
 using System.Threading;
 using Android.Views.InputMethods;
 using POSMobile.CustomClass;
+using Android.Telephony;
+using Android.Support.V7.Widget;
 
 namespace POSV1
 {
@@ -38,28 +40,33 @@ namespace POSV1
                 , canScan = false
                 , hasAction
                 , hasChoseItem = false;
-        private string 
+        private string
             requestType
             , evaluationType
             , command
             , filterValue = ""
-            , oldFilterValue = "";
+            , oldFilterValue = ""
+            , sslfVendor = " "
+            , sslfConsumer = " "
+            , srfVendor = " "
+            , srfConsumer = " ";
         private double? oldPrice = 0.0;
         private int? oldStock = 0;
         private int currentRetrieveItems = 0, countDialogShown, itemPosition = -1;
         private SupportToolbar mToolbar;
         private AppActionBarDrawerToggle mDrawerToggle;
         private DrawerLayout mDrawerLayout;
-        private ListView mRightDrawer, mLeftDrawer, lvItems, lvCartList, lvSalesSummary;
+        private ListView mRightDrawer, mLeftDrawer, lvItems, lvCartList, lvSalesSummary, lvSalesReport;
         private IMenu menu;
         private AutoCompleteTextView actvItemName, atcvSalesItemDescription;
         private LinearLayout parentLayout;
-        private FrameLayout flInvetoryList, flCartList, flMainSales, flAddEditSales, flSalesSummary;
+        private FrameLayout flInvetoryList, flCartList, flMainSales, flAddEditSales, flSalesSummary, flSalesReport;
         private GridLayout glAbout;
         private ScrollView svInventory, svAddEditCart;
         private ListItemAdapter listItemAdapter, cartListAdapter, salesSummaryListAdapter;
+        private SalesReportAdapter salesReportAdapter;
         private Dialog popupMenuDialog, salesPopupMenuDialog, dynamicPopupDialog, loaderDialog;
-        private DateTime salesDate, salesTime, fromDate, toDate;
+        private DateTime salesDate, salesTime, fromDate, toDate, sslfFromTime, sslfToTime, srfFrom ,srfTo;
         private ArrayAdapter aaSalesItemDescription;
         private ImageView loaderImage;
         private SaleMaster salesMasterModel;
@@ -70,10 +77,12 @@ namespace POSV1
         private List<ListItem> itemListDisplay = new List<ListItem>();
         private List<ListItem> cartItemsDisplay = new List<ListItem>();
         private List<ListItem> salesSummaryListDisplay = new List<ListItem>();
+        private List<SalesReportItem> salesReportItemDisplay = new List<SalesReportItem>();
         private List<SaleDetail> itemCartList = new List<SaleDetail>();
         private List<SalesSummary> currentSales = new List<SalesSummary>();
         private List<string> aaSalesItemDescriptionList = new List<string>();
         private List<Configuration> access = new List<Configuration>();
+        View filterView;
         private Animation 
             mainFab_show
             , mainFab_hide
@@ -107,7 +116,8 @@ namespace POSV1
             , etAvarageCost
             , etBarcode
             , etSalesBarcode
-            , etAmountReceived;
+            , etAmountReceived
+            , etConsumerMobileNo;
         private TextView 
             tvSelectSalesDate
             , tvShowSales
@@ -152,7 +162,7 @@ namespace POSV1
             , deleteSelectedFab
             , editSelectedFab
             , showDetailFab
-            , fabMainAddEditSales
+            , fabSalesReport
             , mainFab
             , fabItem
             , salesSummaryMainFab;
@@ -222,6 +232,7 @@ namespace POSV1
             this.tvTotalAmount = FindViewById<TextView>(Resource.Id.tvTotalAmount);
             this.tvChange = FindViewById<TextView>(Resource.Id.tvChange);
             this.etConsumer = FindViewById<EditText>(Resource.Id.etConsumer);
+            this.etConsumerMobileNo = FindViewById<EditText>(Resource.Id.etConsumerMobileNo);
             this.etVendor = FindViewById<EditText>(Resource.Id.etVendor);
             this.etAmountReceived = FindViewById<EditText>(Resource.Id.etAmountReceived);
             this.btnEvaluateSales = FindViewById<Button>(Resource.Id.btnEvaluateSale);
@@ -236,7 +247,7 @@ namespace POSV1
             //Fabs
             this.fabItem = FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.fabItem);
             this.mainSalesFab = FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.fabMainSales);
-            //this.fabMainAddEditSales = FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.fabMainAddEditSales);
+            this.fabSalesReport = FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.salesReportMainFab);
             this.cartListMainFab = FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.cartListMainFab);
             this.salesSummaryMainFab = FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.salesSummaryMainFab);
 
@@ -250,10 +261,13 @@ namespace POSV1
             this.svAddEditCart = FindViewById<ScrollView>(Resource.Id.AddEditCart);
             this.flCartList = FindViewById<FrameLayout>(Resource.Id.CartList);
             this.flSalesSummary = FindViewById<FrameLayout>(Resource.Id.SalesSummary);
+            this.flSalesReport = FindViewById<FrameLayout>(Resource.Id.SalesReport);
 
+            //ListViews
             this.lvItems = FindViewById<ListView>(Resource.Id.lvList);
             this.lvCartList = FindViewById<ListView>(Resource.Id.lvCart);
             this.lvSalesSummary = FindViewById<ListView>(Resource.Id.lvSalesSummary);
+            this.lvSalesReport = FindViewById<ListView>(Resource.Id.lvSalesReport);
 
             //Set Animation
             this.setAnimations();
@@ -266,9 +280,9 @@ namespace POSV1
             //Events
             this.fabItem.Click += fabItem_Clicked;
             this.mainSalesFab.Click += this.mainSalesFab_Clicked;
-            //this.fabMainAddEditSales.Click += this.fabMainAddEditSales_Clicked;
             this.cartListMainFab.Click += this.cartListMainFab_Clicked;
             this.salesSummaryMainFab.Click += this.salesSummaryMainFab_Clicked;
+            this.fabSalesReport.Click += this.salesReportMainFab_Clicked;
             this.mLeftDrawer.ItemClick += this.mLeftDrawer_ItemClicked;
             this.mRightDrawer.ItemClick += this.mRightDrawer_ItemClicked;
             this.atcvSalesItemDescription.ItemClick += this.atcvSalesItemDescription_Clicked;
@@ -321,6 +335,7 @@ namespace POSV1
             this.flAddEditSales.Visibility = ViewStates.Gone;
             this.svAddEditCart.Visibility = ViewStates.Gone;
             this.flSalesSummary.Visibility = ViewStates.Gone;
+            this.flSalesReport.Visibility = ViewStates.Gone;
             this.hideOptionMenu(Resource.Id.action_more);
             this.hideOptionMenu(Resource.Id.action_refresh);
             this.hasAction = false;
@@ -411,6 +426,7 @@ namespace POSV1
             switch (e.Position)
             {
                 case 0:
+                    this.resetSaleSummaryFilter();
                     this.getSalesForMainContent(true);
                     break;
                 case 1:
@@ -514,10 +530,77 @@ namespace POSV1
             }
             else
             {
-                if (this.flMainSales.Visibility == ViewStates.Visible)
+                //Reports
+                if (this.flMainSales.Visibility == ViewStates.Visible 
+                    || this.flSalesReport.Visibility == ViewStates.Visible 
+                    || this.flSalesSummary.Visibility == ViewStates.Visible)
                 {
-                    this.hideLayouts();
+                    if (this.hasAction)
+                        return;
 
+                    this.hasAction = true;
+
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+                    this.filterView = LayoutInflater.Inflate(Resource.Layout.SaleReportFilterLayout, null);
+
+                    if (this.salesReportItemDisplay.Count == 0)
+                    {
+                        this.srfFrom = DateTime.Now;
+                        this.srfTo = DateTime.Now;
+                        this.srfVendor = this.filterView.FindViewById<EditText>(Resource.Id.etReportVendor).Text;
+                        this.srfConsumer = this.filterView.FindViewById<EditText>(Resource.Id.etReportConsumer).Text;
+                    }
+
+                    this.filterView.FindViewById<EditText>(Resource.Id.etReportFrom).Text = this.srfFrom.ToString("dddd, MMMM dd, yyyy");
+                    this.filterView.FindViewById<EditText>(Resource.Id.etReportTo).Text = this.srfTo.ToString("dddd, MMMM dd, yyyy");
+                    this.filterView.FindViewById<EditText>(Resource.Id.etReportVendor).Text = this.srfVendor.ToString();
+                    this.filterView.FindViewById<EditText>(Resource.Id.etReportConsumer).Text = this.srfConsumer.ToString();
+                    this.filterView.FindViewById<EditText>(Resource.Id.etReportFocus).RequestFocus();
+
+                    this.filterView.FindViewById<EditText>(Resource.Id.etReportFrom).FocusChange += this.focusReportListener;
+                    this.filterView.FindViewById<EditText>(Resource.Id.etReportTo).FocusChange += this.focusReportListener;
+
+                    dialogBuilder.SetCancelable(false);
+                    dialogBuilder.SetView(filterView);
+                    dialogBuilder.SetNegativeButton("Cancel", delegate
+                    {
+                        this.srfFrom = this.srfFrom == DateTime.Now ? DateTime.Now : this.srfFrom;
+                        this.srfTo = this.srfTo == DateTime.Now ? DateTime.Now : this.srfTo;
+                        this.hasAction = false;
+                    });
+
+                    switch (e.Position)
+                    {
+                        case 0: // Sales By Date
+                            dialogBuilder.SetPositiveButton("Find", delegate
+                            {
+                                this.hideLayouts();
+                                this.salesReportItemDisplay.Clear();
+                                this.getSalesReportByDate(this.srfFrom, this.srfTo, false);
+                            });
+                            break;
+                        case 1:  // Sales By Consumer
+                            this.filterView.FindViewById<EditText>(Resource.Id.etReportConsumer).Visibility = ViewStates.Visible;
+                            dialogBuilder.SetPositiveButton("Find", delegate
+                            {
+                                this.hideLayouts();
+                                this.salesReportItemDisplay.Clear();
+                                this.srfConsumer = this.filterView.FindViewById<EditText>(Resource.Id.etReportConsumer).Text.Trim().ToUpper();
+                                this.getSalesReportByConsumer(this.srfFrom, this.srfTo, this.srfConsumer, false);
+                            });
+                            break;
+                        default:  // Sales By Vendor
+                            this.filterView.FindViewById<EditText>(Resource.Id.etReportVendor).Visibility = ViewStates.Visible;
+                            dialogBuilder.SetPositiveButton("Find", delegate
+                            {
+                                this.hideLayouts();
+                                this.salesReportItemDisplay.Clear();
+                                this.srfVendor = this.filterView.FindViewById<EditText>(Resource.Id.etReportVendor).Text.Trim().ToUpper();
+                                this.getSalesReportByVendor(this.srfFrom, this.srfTo, this.srfVendor, false);
+                            });
+                            break;
+                    }
+                    dialogBuilder.Create().Show();
                 }
                 else
                 {
@@ -722,10 +805,80 @@ namespace POSV1
                     messageDialog.SetNegativeButton("No", delegate { });
                     messageDialog.SetPositiveButton("Yes", delegate
                     {
+                        //Item List
                         if (requestType.Equals("Show Items"))
                         {
                             this.invokeLoader();
                             this.resetItemList();
+                        }
+                        //Sale Summary List
+                        if (this.flSalesSummary.Visibility == ViewStates.Visible)
+                        {
+                            this.invokeLoader();
+                            this.salesSummaryListDisplay.Clear();
+                            Response getSalesSummary = new Response();
+                            SalesSummary salesSummaryModel = new SalesSummary();
+
+                            getSalesSummary = salesSummaryModel.getSalesByDateTime(this.salesDate
+                                                                                    , this.sslfFromTime
+                                                                                    , this.sslfToTime
+                                                                                    , this.sslfConsumer
+                                                                                    , this.sslfVendor
+                                                                                    , "my_store.db"
+                                                                                    , this.salesSummaryListDisplay.Count);
+                            if (getSalesSummary.status.Equals("SUCCESS"))
+                            {
+                                foreach (SalesSummary ssm in getSalesSummary.salesSummary)
+                                {
+                                    this.salesSummaryListDisplay.Add(new ListItem()
+                                    {
+                                        Id = ssm.SaleMasterId
+                                        , IsChecked = false
+                                        , Description = string.Format("{0} - {1} {2} sold for {3}"
+                                        , ssm.SalesDateTime.ToString("hh:mm:ss tt")
+                                        , ssm.ItemsSold
+                                        , ssm.ItemsSold > 1 ? "Items" : "Item"
+                                        , this.formatCurrency(ssm.Amount.ToString()))
+                                    });
+                                }
+                                if (this.salesSummaryListAdapter == null)
+                                {
+                                    this.salesSummaryListAdapter = new ListItemAdapter(this, this.salesSummaryListDisplay);
+                                    this.lvSalesSummary.Adapter = this.salesSummaryListAdapter;
+                                }
+                                RunOnUiThread(() =>
+                                {
+                                    this.salesSummaryListAdapter.NotifyDataSetChanged();
+                                });
+                                this.hideLoader();
+                            }
+                            else
+                            {
+                                this.hideLoader();
+                                this.showMessage(getSalesSummary.message);
+                            }
+                        }
+                        //Sales Report List
+                        if (this.flMainSales.Visibility == ViewStates.Visible || this.flSalesReport.Visibility == ViewStates.Visible)
+                        {
+                            if (this.salesReportItemDisplay[0].type == 1)
+                            {
+                                //Sales By Date
+                                this.salesReportItemDisplay.Clear();
+                                this.getSalesReportByDate(this.srfFrom, this.srfTo, true);
+                            }
+                            else if (this.salesReportItemDisplay[0].type == 2)
+                            {
+                                //Sales By Consumer
+                                this.salesReportItemDisplay.Clear();
+                                this.getSalesReportByConsumer(this.srfFrom, this.srfTo, this.srfConsumer, true);
+                            }
+                            else
+                            {
+                                //Sales By Vendor
+                                this.salesReportItemDisplay.Clear();
+                                this.getSalesReportByVendor(this.srfFrom, this.srfTo, this.srfVendor, true);
+                            }
                         }
                     });
                     messageDialog.Show();
@@ -815,7 +968,325 @@ namespace POSV1
             InputMethodManager inputManager = (InputMethodManager)this.GetSystemService(Context.InputMethodService);
             inputManager.HideSoftInputFromWindow(this.CurrentFocus.WindowToken, HideSoftInputFlags.NotAlways);
         }
+        public void sendSMS(string recipient, string smsMessage)
+        {
+            List<string> sms = new List<string>();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            int divisor = 0;
+            int max = 160;
+            builder.SetTitle("Send SMS");
+            builder.SetMessage("Proceed to sending of purchased summary.");
+            builder.SetNegativeButton("No", delegate { });
+            builder.SetPositiveButton("Yes", delegate {
+                divisor = (smsMessage.Length / max) == 0 ? 1 : (smsMessage.Length / max) + 1;
+                if (divisor != 1)
+                {
+                    for (int i = 1; i <= divisor; i++)
+                    {
+                        if (i != divisor)
+                        {
+                            if (i == 1)
+                            {
+                                SmsManager.Default.SendTextMessage(recipient, null,
+                                                      smsMessage.Substring(0, max), null, null);
+                            }
+                            else
+                            {
+                                SmsManager.Default.SendTextMessage(recipient, null,
+                                                     smsMessage.Substring(((i - 1) * max), max), null, null);
+                            }
+                        }
+                        else
+                        {
+                            SmsManager.Default.SendTextMessage(recipient, null,
+                                                      smsMessage.Substring(((i - 1) * max), (smsMessage.Length - ((i - 1) * max))), null, null);
+                        }
+                    }
+                }
+                else
+                {
+                    SmsManager.Default.SendTextMessage(recipient, null,
+                                                      smsMessage, null, null);
+                }
+            });
+            builder.SetCancelable(false);
+            builder.Create().Show();
+        }
         /* ------------------------------------------SALES--------------------------------------*/
+        public void getSalesReportByDate(DateTime fromDate, DateTime toDate, bool showMore)
+        {
+            Response getSalesReportCount = new Response();
+            Response getSalesReportList = new Response();
+            SalesSummary getSalesReportCountA = new SalesSummary();
+            SalesSummary getSalesReportListA = new SalesSummary();
+
+            this.invokeLoader();
+            string command = string.Format("DATE(SalesDateTime) BETWEEN DATE('{0}') AND DATE('{1}')"
+                , fromDate.ToString("yyyy-MM-dd ")
+                , toDate.ToString("yyyy-MM-dd "));
+            getSalesReportCount = getSalesReportCountA.getSalesReportCount(command, "my_store.db");
+            if (getSalesReportCount.status.Equals("SUCCESS"))
+            {
+                if (getSalesReportCount.param1 == 0 && !showMore)
+                {
+                    this.showMessage("No record has been retrieved.");
+                    this.flMainSales.Visibility = ViewStates.Visible;
+                    this.showOptionMenu(Resource.Id.action_more);
+                    this.hideLoader();
+                    return;
+                }
+                else if(getSalesReportCount.param1 == 0 && showMore)
+                {
+                    this.flSalesReport.Visibility = ViewStates.Visible;
+                    this.showOptionMenu(Resource.Id.action_more);
+                    this.hideLoader();
+                    return;
+                }
+
+                getSalesReportList = getSalesReportListA.getSalesReportByDate(fromDate, toDate, "my_store.db", this.salesReportItemDisplay.Count);
+                if (getSalesReportList.status.Equals("SUCCESS"))
+                {
+                    foreach (SalesReportItem ssr in getSalesReportList.salesReportList)
+                    {
+                        this.salesReportItemDisplay.Add(new SalesReportItem()
+                        {
+                            type = 1
+                            , salesDate = ssr.salesDate
+                            , noOfSales = ssr.noOfSales
+                            , salesTotalAmount = this.formatCurrency(ssr.salesTotalAmount)
+                            , salesNoOfItems = ssr.salesNoOfItems
+                        });
+                    }
+
+                    if (this.salesReportAdapter == null)
+                    {
+                        this.salesReportAdapter = new SalesReportAdapter(this, this.salesReportItemDisplay);
+                        this.lvSalesReport.Adapter = this.salesReportAdapter;
+                    }
+                    //Update list of item in ListView Adapter
+                    RunOnUiThread(() =>
+                    {
+                        if (this.salesReportAdapter != null)
+                        {
+                            this.salesReportAdapter.NotifyDataSetChanged();
+                        }
+                    });
+                    if (!showMore)
+                    {
+                        this.flSalesReport.Visibility = ViewStates.Visible;
+                        this.showOptionMenu(Resource.Id.action_more);
+                        this.showOptionMenu(Resource.Id.action_refresh);
+                        this.mDrawerLayout.OpenDrawer(mLeftDrawer);
+                        this.mDrawerToggle.setCloseDrawerDesc(Resource.String.SalesByDate);
+                    }
+                    new System.Threading.Thread(new ThreadStart(delegate
+                    {
+                        System.Threading.Thread.Sleep(500);
+                        RunOnUiThread(() =>
+                        {
+                            this.mDrawerLayout.CloseDrawer(mLeftDrawer);
+                        });
+                    })).Start();
+                    this.hideLoader();
+                }
+                else
+                {
+                    this.flMainSales.Visibility = ViewStates.Visible;
+                    this.showOptionMenu(Resource.Id.action_more);
+                    this.showMessage(getSalesReportList.message);
+                }
+            }
+            else
+            {
+                this.flMainSales.Visibility = ViewStates.Visible;
+                this.showOptionMenu(Resource.Id.action_more);
+                this.showMessage(getSalesReportCount.message);
+            }
+        }
+        public void getSalesReportByConsumer(DateTime fromDate, DateTime toDate, string consumer, bool showMore)
+        {
+            Response getSalesReportCount = new Response();
+            Response getSalesReportList = new Response();
+            SalesSummary getSalesReportCountA = new SalesSummary();
+            SalesSummary getSalesReportListA = new SalesSummary();
+
+            this.invokeLoader();
+            string command = string.Format("SoldTo LIKE '%{0}%' AND DATE(SalesDateTime) BETWEEN DATE('{1}') AND DATE('{2}')"
+                , consumer
+                , fromDate.ToString("yyyy-MM-dd ")
+                , toDate.ToString("yyyy-MM-dd "));
+            getSalesReportCount = getSalesReportCountA.getSalesReportCount(command, "my_store.db");
+            if (getSalesReportCount.status.Equals("SUCCESS"))
+            {
+                if (getSalesReportCount.param1 == 0 && !showMore)
+                {
+                    this.showMessage("No record has been retrieved.");
+                    this.flMainSales.Visibility = ViewStates.Visible;
+                    this.showOptionMenu(Resource.Id.action_more);
+                    this.hideLoader();
+                    return;
+                }
+                else if (getSalesReportCount.param1 == 0 && showMore)
+                {
+                    this.flSalesReport.Visibility = ViewStates.Visible;
+                    this.showOptionMenu(Resource.Id.action_more);
+                    this.hideLoader();
+                    return;
+                }
+
+                getSalesReportList = getSalesReportListA.getSalesReportByConsumer(fromDate, toDate, consumer, "my_store.db", this.salesReportItemDisplay.Count);
+                if (getSalesReportList.status.Equals("SUCCESS"))
+                {
+                    foreach (SalesReportItem ssr in getSalesReportList.salesReportList)
+                    {
+                        this.salesReportItemDisplay.Add(new SalesReportItem()
+                        {
+                            type = 2
+                            , salesDate = ssr.salesDate
+                            , noOfSales = ssr.noOfSales
+                            , salesTotalAmount = this.formatCurrency(ssr.salesTotalAmount)
+                            , salesNoOfItems = ssr.salesNoOfItems
+                            , salesConsumer = ssr.salesConsumer
+                        });
+                    }
+
+                    if (this.salesReportAdapter == null)
+                    {
+                        this.salesReportAdapter = new SalesReportAdapter(this, this.salesReportItemDisplay);
+                        this.lvSalesReport.Adapter = this.salesReportAdapter;
+                    }
+                    //Update list of item in ListView Adapter
+                    RunOnUiThread(() =>
+                    {
+                        if (this.salesReportAdapter != null)
+                        {
+                            this.salesReportAdapter.NotifyDataSetChanged();
+                        }
+                    });
+                    if (!showMore)
+                    {
+                        this.flSalesReport.Visibility = ViewStates.Visible;
+                        this.showOptionMenu(Resource.Id.action_more);
+                        this.showOptionMenu(Resource.Id.action_refresh);
+                        this.mDrawerLayout.OpenDrawer(mLeftDrawer);
+                        this.mDrawerToggle.setCloseDrawerDesc(Resource.String.SalesByConsumer);
+                    }
+                    new System.Threading.Thread(new ThreadStart(delegate
+                    {
+                        System.Threading.Thread.Sleep(500);
+                        RunOnUiThread(() =>
+                        {
+                            this.mDrawerLayout.CloseDrawer(mLeftDrawer);
+                        });
+                    })).Start();
+                    this.hideLoader();
+                }
+                else
+                {
+                    this.flMainSales.Visibility = ViewStates.Visible;
+                    this.showOptionMenu(Resource.Id.action_more);
+                    this.showMessage(getSalesReportList.message);
+                }
+            }
+            else
+            {
+                this.flMainSales.Visibility = ViewStates.Visible;
+                this.showOptionMenu(Resource.Id.action_more);
+                this.showMessage(getSalesReportCount.message);
+            }
+        }
+        public void getSalesReportByVendor(DateTime fromDate, DateTime toDate, string vendor, bool showMore)
+        {
+            Response getSalesReportCount = new Response();
+            Response getSalesReportList = new Response();
+            SalesSummary getSalesReportCountA = new SalesSummary();
+            SalesSummary getSalesReportListA = new SalesSummary();
+
+            this.invokeLoader();
+            string command = string.Format("SoldBy LIKE '%{0}%' AND DATE(SalesDateTime) BETWEEN DATE('{1}') AND DATE('{2}')"
+                , vendor
+                , fromDate.ToString("yyyy-MM-dd ")
+                , toDate.ToString("yyyy-MM-dd "));
+            getSalesReportCount = getSalesReportCountA.getSalesReportCount(command, "my_store.db");
+            if (getSalesReportCount.status.Equals("SUCCESS"))
+            {
+                if (getSalesReportCount.param1 == 0 && !showMore)
+                {
+                    this.showMessage("No record has been retrieved.");
+                    this.flMainSales.Visibility = ViewStates.Visible;
+                    this.showOptionMenu(Resource.Id.action_more);
+                    this.hideLoader();
+                    return;
+                }
+                else if (getSalesReportCount.param1 == 0 && showMore)
+                {
+                    this.flSalesReport.Visibility = ViewStates.Visible;
+                    this.showOptionMenu(Resource.Id.action_more);
+                    this.hideLoader();
+                    return;
+                }
+
+                getSalesReportList = getSalesReportListA.getSalesReportByVendor(fromDate, toDate, vendor, "my_store.db", this.salesReportItemDisplay.Count);
+                if (getSalesReportList.status.Equals("SUCCESS"))
+                {
+                    foreach (SalesReportItem ssr in getSalesReportList.salesReportList)
+                    {
+                        this.salesReportItemDisplay.Add(new SalesReportItem()
+                        {
+                            type = 3
+                            , salesDate = ssr.salesDate
+                            , noOfSales = ssr.noOfSales
+                            , salesTotalAmount = this.formatCurrency(ssr.salesTotalAmount)
+                            , salesNoOfItems = ssr.salesNoOfItems
+                            , salesVendor = ssr.salesVendor
+                        });
+                    }
+
+                    if (this.salesReportAdapter == null)
+                    {
+                        this.salesReportAdapter = new SalesReportAdapter(this, this.salesReportItemDisplay);
+                        this.lvSalesReport.Adapter = this.salesReportAdapter;
+                    }
+                    //Update list of item in ListView Adapter
+                    RunOnUiThread(() =>
+                    {
+                        if (this.salesReportAdapter != null)
+                        {
+                            this.salesReportAdapter.NotifyDataSetChanged();
+                        }
+                    });
+                    if (!showMore)
+                    {
+                        this.flSalesReport.Visibility = ViewStates.Visible;
+                        this.showOptionMenu(Resource.Id.action_more);
+                        this.showOptionMenu(Resource.Id.action_refresh);
+                        this.mDrawerLayout.OpenDrawer(mLeftDrawer);
+                        this.mDrawerToggle.setCloseDrawerDesc(Resource.String.SalesByVendor);
+                    }
+                    new System.Threading.Thread(new ThreadStart(delegate
+                    {
+                        System.Threading.Thread.Sleep(500);
+                        RunOnUiThread(() =>
+                        {
+                            this.mDrawerLayout.CloseDrawer(mLeftDrawer);
+                        });
+                    })).Start();
+                    this.hideLoader();
+                }
+                else
+                {
+                    this.flMainSales.Visibility = ViewStates.Visible;
+                    this.showOptionMenu(Resource.Id.action_more);
+                    this.showMessage(getSalesReportList.message);
+                }
+            }
+            else
+            {
+                this.flMainSales.Visibility = ViewStates.Visible;
+                this.showOptionMenu(Resource.Id.action_more);
+                this.showMessage(getSalesReportCount.message);
+            }
+        }
         public int searchInItemCart(int id)
         {
             for (int i = 0; i < this.itemCartList.Count; i++)
@@ -1232,9 +1703,11 @@ namespace POSV1
             this.tvTotalAmount.Text = string.Format("Total Amount: {0}", "0.00");
             this.etAmountReceived.Text = "0.00";
             this.tvChange.Text = "Change: 0.00";
-            this.etConsumer.Text = "My Consumer";
-            this.etVendor.Text = "My Vendor";
-            if (this.btnEvaluateSales.Text.Equals("Evaluate"))
+            this.etConsumer.Text = "GORGEOUS";
+            this.etVendor.Text = "SMART VENDOR";
+            this.etConsumerMobileNo.Text = "";
+            this.resetSaleSummaryFilter();
+            if (this.btnEvaluateSales.Text.Equals("Evaluate") || this.btnEvaluateSales.Text.Equals("Update Sales"))
             {
                 this.btnEvaluateSales.Text = "Save Sales";
             }
@@ -1274,6 +1747,8 @@ namespace POSV1
             }
             else
             {
+                string smsMessage = "", smsItems = "";
+                int count = 1;
                 if (this.btnEvaluateSales.Text.Equals("Save Sales"))
                 {
 
@@ -1288,12 +1763,13 @@ namespace POSV1
                     int salesItemId = new SaleMaster().getLastId("my_store.db").param1 + 1;
                     sqliteADO = new SQLiteADO();
 
-                    command = string.Format("INSERT INTO SaleMaster(SalesDateTime, Amount, AmountReceived, SoldBy, SoldTo) VALUES('{0}', {1}, {2}, '{3}', '{4}');"
+                    command = string.Format("INSERT INTO SaleMaster(SalesDateTime, Amount, AmountReceived, SoldBy, SoldTo, SoldToMobileNo) VALUES('{0}', {1}, {2}, '{3}', '{4}', '{5}');"
                         , string.Format("{0} {1}", this.salesDate.ToString("yyyy-MM-dd"), this.salesTime.ToString("HH:mm:ss"))
                         , Convert.ToDouble(this.salesMasterModel.Amount)
                         , Convert.ToDouble(this.etAmountReceived.Text.Trim())
                         , this.etVendor.Text.ToString()
-                        , this.etConsumer.Text.ToString()) + "\n";
+                        , this.etConsumer.Text.ToString()
+                        , this.etConsumerMobileNo.Text.Trim()) + "\n";
                     foreach (SaleDetail saleDetails in this.itemCartList)
                     {
                         command += string.Format("INSERT INTO SaleDetail(SaleMasterId, ItemId, Quantity) VALUES({0}, {1}, {2});"
@@ -1306,13 +1782,32 @@ namespace POSV1
                             , itemModel.AvailableStock - saleDetails.Quantity
                             , itemModel.Id) + "\n";
                         }
+                        smsItems += string.Format("{0} {1}({2}) COST {3}{4}"
+                            , saleDetails.Quantity
+                            , saleDetails.ItemName
+                            , this.formatCurrency(saleDetails.RetailPrice.ToString())
+                            , this.formatCurrency((saleDetails.RetailPrice * saleDetails.Quantity).ToString())
+                            , count == this.itemCartList.Count ? "":",") + "\n";
+                        count = count + 1;
                     }
                     saveSales = sqliteADO.ExecuteNonQuery("BEGIN TRANSACTION;" + "\n" + command + "COMMIT;", dbPath);
                     if (saveSales.status.Equals("SUCCESS"))
                     {
+                        if (!this.etConsumerMobileNo.Text.Trim().Equals(""))
+                        {
+                            smsMessage = string.Format("Hi {0},", this.etConsumer.Text.Trim()) + "\n \n";
+                            smsMessage += string.Format("Purchased Date: {0}", string.Format("{0} {1}", this.salesDate.ToString("dddd, MM dd,yyyy"), this.salesTime.ToString("hh:mm:ss tt"))) +"\n";
+                            smsMessage += string.Format("Total Amount: {0}", this.formatCurrency(this.salesMasterModel.Amount.ToString())) + "\n";
+                            smsMessage += string.Format("Amount Received: {0}", this.formatCurrency(this.etAmountReceived.Text.Trim().ToString())) + "\n";
+                            smsMessage += string.Format("Change: {0}", this.formatCurrency((Convert.ToDouble(this.etAmountReceived.Text.Trim()) - this.salesMasterModel.Amount).ToString())) + "\n";
+                            smsMessage += string.Format("Vendor: {0}", this.etVendor.Text.Trim()) + "\n \n";
+                            smsMessage += string.Format("Items Purchased:") + "\n";
+                            smsMessage += smsItems + "\n My Store";
+                            this.sendSMS(this.etConsumerMobileNo.Text.Trim(), smsMessage);
+                        }
                         this.resetSales();
                         this.hideLoader();
-                        this.showSnackBar("Successfully Saved.");
+                        this.showSnackBarInfinite("Successfully Saved.");
                     }
                     else
                     {
@@ -1371,18 +1866,42 @@ namespace POSV1
                     }
 
                     //Update Sale Master
-                    command += string.Format("UPDATE SaleMaster SET Amount = {0}, AmountReceived = {1}, SoldBy = '{2}', SoldTo = '{3}' WHERE Id = {4};"
+                    command += string.Format("UPDATE SaleMaster SET Amount = {0}, AmountReceived = {1}, SoldBy = '{2}', SoldTo = '{3}', SoldToMobileNo = '{4}'  WHERE Id = {5};"
                         , Convert.ToDouble(this.salesMasterModel.Amount)
                         , Convert.ToDouble(this.etAmountReceived.Text.Trim())
                         , this.etVendor.Text.ToString()
                         , this.etConsumer.Text.ToString()
+                        , this.etConsumerMobileNo.Text.Trim()
                         , this.salesMasterModel.Id) + "\n";
+
+                    foreach (SaleDetail saleDetails in this.itemCartList)
+                    {
+                        smsItems += string.Format("{0} {1}({2}) COST {3}{4}"
+                            , saleDetails.Quantity
+                            , saleDetails.ItemName
+                            , this.formatCurrency(saleDetails.RetailPrice.ToString())
+                            , this.formatCurrency((saleDetails.RetailPrice * saleDetails.Quantity).ToString())
+                            , count == this.itemCartList.Count ? "":",") + "\n";
+                        count = count + 1;
+                    }
 
                     this.sqliteADO = new SQLiteADO();
                     Response response = new Response();
                     response = sqliteADO.ExecuteNonQuery("BEGIN TRANSACTION;" + "\n" + command + "COMMIT;", dbPath);
                     if (response.status.Equals("SUCCESS"))
                     {
+                        if (!this.etConsumerMobileNo.Text.Trim().Equals(""))
+                        {
+                            smsMessage = string.Format("Hi {0},", this.etConsumer.Text.Trim()) + "\n \n";
+                            smsMessage += string.Format("Purchased Date: {0}", string.Format("{0} {1}", this.salesDate.ToString("dddd, MM dd,yyyy"), this.salesTime.ToString("hh:mm:ss tt"))) + "\n";
+                            smsMessage += string.Format("Total Amount: {0}", this.formatCurrency(this.salesMasterModel.Amount.ToString())) + "\n";
+                            smsMessage += string.Format("Amount Received: {0}", this.formatCurrency(this.salesMasterModel.AmountReceived.ToString())) + "\n";
+                            smsMessage += string.Format("Change: {0}", this.formatCurrency((this.salesMasterModel.AmountReceived - this.salesMasterModel.Amount).ToString())) + "\n";
+                            smsMessage += string.Format("Vendor: {0}", this.etVendor.Text.Trim()) + "\n \n";
+                            smsMessage += string.Format("Items Purchased:") + "\n";
+                            smsMessage += smsItems + "\n My Store";
+                            this.sendSMS(this.etConsumerMobileNo.Text.Trim(), smsMessage);
+                        }
                         this.hideLayouts();
                         this.getSalesForMainContent(false);
                         this.showSnackBarInfinite("Successfully updated.");
@@ -1401,6 +1920,162 @@ namespace POSV1
         {
             this.resetSales();
             this.hideKeyBoard();
+        }
+        public void resetSaleSummaryFilter()
+        {
+
+            this.sslfFromTime = Convert.ToDateTime(this.salesDate.ToString("yyyy-MM-dd") + " 00:01:00");
+            this.sslfToTime = Convert.ToDateTime(this.salesDate.ToString("yyyy-MM-dd") + " 23:59:59");
+            this.sslfVendor = "";
+            this.sslfConsumer = "";
+        }
+        public void setFilterFromTime(object sender, EventArgs e)
+        {
+            this.hideKeyBoard();
+            DateTime holder = DateTime.Now;
+            TimePickerFragment frag = TimePickerFragment.NewInstance(delegate(DateTime date)
+            {
+                    holder = Convert.ToDateTime(this.sslfFromTime.ToString("yyyy-MM-dd") + " " + date.ToString("HH:mm") + ":00");
+                    if (date > this.sslfToTime)
+                    {
+                        this.showMessage("From value should not be beyond To value.");
+                    }
+                    else
+                    {
+                        this.sslfFromTime = holder;
+                        filterView.FindViewById<EditText>(Resource.Id.etFilterFromTime).Text = this.sslfFromTime.ToString("hh:mm:ss tt");
+                    }
+
+                    filterView.FindViewById<EditText>(Resource.Id.etFilterVendor).RequestFocus();
+            }, delegate(DateTime date)
+            {
+               //Do nothing
+
+                filterView.FindViewById<EditText>(Resource.Id.etFilterVendor).RequestFocus();
+            });
+            if (this.sslfFromTime.Hour == 0)
+            {
+                frag.currentDateTime = Convert.ToDateTime(this.salesDate.ToString("yyyy-MM-dd") + " 00:01:00");
+            }
+            else
+            {
+                frag.currentDateTime = Convert.ToDateTime(this.salesDate.ToString("yyyy-MM-dd") + " " + this.sslfFromTime.ToString("HH:mm:ss"));
+            }
+            frag.Show(FragmentManager, TimePickerFragment.TAG);
+        }
+        public void setFilterToTime(object sender, EventArgs e)
+        {
+            this.hideKeyBoard();
+            int count = 0;
+            DateTime holder = DateTime.Now;
+            TimePickerFragment frag = TimePickerFragment.NewInstance(delegate(DateTime date)
+            {
+                //If user select date
+                count = count + 1;
+                if (count == 1)
+                {
+                    holder = Convert.ToDateTime(this.sslfToTime.ToString("yyyy-MM-dd") + " " + date.ToString("HH:mm") + ":59");
+                    if (date < this.sslfFromTime)
+                    {
+                        this.showMessage("To value should be beyond From value.");
+                    }
+                    else
+                    {
+                        this.sslfToTime = holder;
+                        filterView.FindViewById<EditText>(Resource.Id.etFilterToTime).Text = this.sslfToTime.ToString("hh:mm:ss tt");
+                    }
+                    filterView.FindViewById<EditText>(Resource.Id.etFilterVendor).RequestFocus();
+                }
+            }, delegate(DateTime date)
+            {
+                //Do nothing
+                filterView.FindViewById<EditText>(Resource.Id.etFilterVendor).RequestFocus();
+            });
+            if (this.sslfToTime.Hour == 0)
+            {
+                frag.currentDateTime = Convert.ToDateTime(this.salesDate.ToString("yyyy-MM-dd") + " 23:59:59");
+            }
+            else
+            {
+                frag.currentDateTime = Convert.ToDateTime(this.salesDate.ToString("yyyy-MM-dd") + " " + this.sslfToTime.ToString("HH:mm:ss"));
+            }
+            frag.Show(FragmentManager, TimePickerFragment.TAG);
+        }
+        public void setReportFrom()
+        {
+            DatePickerFragment frag = DatePickerFragment.NewInstance(delegate(DateTime date)
+            {
+                //If user select date
+                this.srfFrom = date;
+                this.filterView.FindViewById<EditText>(Resource.Id.etReportFrom).Text = this.srfFrom.ToString("dddd, MMMM dd, yyyy");
+                this.filterView.FindViewById<EditText>(Resource.Id.etReportFocus).RequestFocus();
+            }, delegate(DateTime date)
+            {
+                //if user cancel the dialog
+                this.filterView.FindViewById<EditText>(Resource.Id.etReportFrom).Text = this.srfFrom.ToString("dddd, MMMM dd, yyyy");
+                this.filterView.FindViewById<EditText>(Resource.Id.etReportFocus).RequestFocus();
+            });
+            if (this.salesReportItemDisplay.Count == 0)
+            {
+                frag.currentDateTime = DateTime.Now;
+            }
+            else
+            {
+                frag.currentDateTime = this.srfFrom;
+            }
+            frag.Show(FragmentManager, DatePickerFragment.TAG);
+        }
+        public void setReportTo()
+        {
+            DatePickerFragment frag = DatePickerFragment.NewInstance(delegate(DateTime date)
+            {
+                //If user select date
+                this.srfTo = date;
+                this.filterView.FindViewById<EditText>(Resource.Id.etReportTo).Text = this.srfTo.ToString("dddd, MMMM dd, yyyy");
+                this.filterView.FindViewById<EditText>(Resource.Id.etReportFocus).RequestFocus();
+            }, delegate(DateTime date)
+            {
+                //if user cancel the dialog
+                this.filterView.FindViewById<EditText>(Resource.Id.etReportTo).Text = this.srfTo.ToString("dddd, MMMM dd, yyyy");
+                this.filterView.FindViewById<EditText>(Resource.Id.etReportFocus).RequestFocus();
+            });
+            if (this.salesReportItemDisplay.Count == 0)
+            {
+                frag.currentDateTime = DateTime.Now;
+            }
+            else
+            {
+                frag.currentDateTime = this.srfFrom;
+            }
+            frag.Show(FragmentManager, DatePickerFragment.TAG);
+        }
+        public void focusListener(object sender, EventArgs e)
+        {
+            if (filterView.FindViewById<EditText>(Resource.Id.etFilterFromTime).HasFocus)
+            {
+                this.setFilterFromTime(sender, e);
+            }
+            else
+            {
+                if (filterView.FindViewById<EditText>(Resource.Id.etFilterToTime).HasFocus)
+                {
+                    this.setFilterToTime(sender, e);
+                }
+            }
+        }
+        public void focusReportListener(object sender, EventArgs e)
+        {
+            if (filterView.FindViewById<EditText>(Resource.Id.etReportFrom).HasFocus)
+            {
+                this.setReportFrom();
+            }
+            else
+            {
+                if (filterView.FindViewById<EditText>(Resource.Id.etReportTo).HasFocus)
+                {
+                    this.setReportTo();
+                }
+            }
         }
         /*----------------------------------Main Sale FABS-----------------------------------------*/
         public void addSalesFab_Clicked(object sender, EventArgs e)
@@ -1432,7 +2107,15 @@ namespace POSV1
                 return;
 
             this.invokeLoader();
-            getSalesSummary = salesSummaryModel.getSalesByDateTime(this.salesDate, "my_store.db", this.salesSummaryListDisplay.Count);
+            this.salesSummaryListDisplay.Clear();
+            this.resetSaleSummaryFilter();
+            getSalesSummary = salesSummaryModel.getSalesByDateTime(this.salesDate
+                , this.sslfFromTime
+                , this.sslfToTime
+                , this.sslfConsumer
+                , this.sslfVendor
+                , "my_store.db"
+                , this.salesSummaryListDisplay.Count);
             if (getSalesSummary.status.Equals("SUCCESS"))
             {
                 if (getSalesSummary.salesSummary.Count == 0)
@@ -1466,6 +2149,7 @@ namespace POSV1
                 this.hideLayouts();
                 this.flSalesSummary.Visibility = ViewStates.Visible;
                 this.showOptionMenu(Resource.Id.action_more);
+                this.showOptionMenu(Resource.Id.action_refresh);
                 this.mDrawerLayout.OpenDrawer(mLeftDrawer);
                 this.mDrawerToggle.setCloseDrawerDesc(Resource.String.SalesList);
                 this.hideSalesMainPopupMenu_Clicked(sender, e);
@@ -1495,6 +2179,7 @@ namespace POSV1
                     {
                         this.salesDate = this.fromDate;
                         this.getSalesForMainContent(false);
+                        this.resetSaleSummaryFilter();
                         this.hideSalesMainPopupMenu_Clicked(sender, e);
                     }
                     else
@@ -1508,6 +2193,7 @@ namespace POSV1
                 //if user cancel the dialog
                 this.salesDate = DateTime.Now;
                 this.hasAction = false;
+                this.resetSaleSummaryFilter();
                 this.hideSalesMainPopupMenu_Clicked(sender, e);
             });
             if (fromDate.Year == 1)
@@ -1534,6 +2220,7 @@ namespace POSV1
             #endif
             var scanner = new ZXing.Mobile.MobileBarcodeScanner();
             scanner.AutoFocus();
+            this.resetItemCartContent();
             // Create your application here
             var result = await scanner.Scan();
             if (result != null)
@@ -1542,8 +2229,14 @@ namespace POSV1
                 response = itemModel.GetByBarcode(result.ToString(), "my_store.db");
                 if (response.param1 == 0)
                 {
-                    this.tvIndicator.Text = "Item doesn't exist, try to add item in inventory.";
+                    this.showMessage("Item doesn't exist, try to add item in inventory.");
                     this.hasAction = false;
+                    this.resetSales();
+                    this.hideLayouts();
+                    this.setTableItemOptions();
+                    this.mRightDrawer.Adapter = new RightDrawerAdapter(this, this.tableItemOptions);
+                    this.showOptionMenu(Resource.Id.action_more);
+                    this.flAddEditSales.Visibility = ViewStates.Visible;
                 }
                 else
                 {
@@ -1653,6 +2346,65 @@ namespace POSV1
                 })).Start();
         }
         /*----------------------------------Sale Summary FABS-------------------------------------*/
+        public void findSaleInSummaryFab_Clicked(object sender, EventArgs e)
+        {
+            if (this.hasAction)
+                return;
+
+            this.hasAction = true;
+            this.isAllowedToCloseDialog = false;
+
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+            filterView = LayoutInflater.Inflate(Resource.Layout.SaleSummaryFilterLayout, null);
+
+            filterView.FindViewById<EditText>(Resource.Id.etFilterFromTime).Text = this.sslfFromTime.ToString("hh:mm:ss tt");
+            filterView.FindViewById<EditText>(Resource.Id.etFilterToTime).Text = this.sslfToTime.ToString("hh:mm:ss tt");
+            filterView.FindViewById<EditText>(Resource.Id.etFilterConsumer).Text = this.sslfConsumer;
+            filterView.FindViewById<EditText>(Resource.Id.etFilterVendor).Text = this.sslfVendor;
+            filterView.FindViewById<EditText>(Resource.Id.etFilterVendor).RequestFocus();
+
+            filterView.FindViewById<EditText>(Resource.Id.etFilterFromTime).Enabled = true;
+            filterView.FindViewById<EditText>(Resource.Id.etFilterToTime).Enabled = true;
+            filterView.FindViewById<EditText>(Resource.Id.etFilterFromTime).FocusChange += focusListener;
+            filterView.FindViewById<EditText>(Resource.Id.etFilterToTime).FocusChange += focusListener;
+
+            string nbLabel = "";
+            if( this.sslfFromTime == Convert.ToDateTime(this.salesDate.ToString("yyyy-MM-dd") + " 00:01:00")
+                && this.sslfToTime == Convert.ToDateTime(this.salesDate.ToString("yyyy-MM-dd") + " 23:59:59")
+                && this.sslfVendor.Equals("")
+                && this.sslfConsumer.Equals(""))
+            {
+                nbLabel = "Cancel";
+            }
+            else
+            {
+                nbLabel = "Clear";
+            }
+            dialogBuilder.SetCancelable(false);
+            dialogBuilder.SetView(filterView);
+            dialogBuilder.SetNegativeButton(nbLabel, delegate
+            {
+
+                this.isAllowedToCloseDialog = true;
+                this.hasAction = false;
+                if (nbLabel.Equals("Clear"))
+                {
+                    this.resetSaleSummaryFilter();
+                    this.showSalesByDateFab_Clicked(new object(), new EventArgs());
+                }
+                this.hideDynamicPopupMenu_Clicked(sender, e);
+            });
+            dialogBuilder.SetPositiveButton("Find", delegate
+            {
+                this.isAllowedToCloseDialog = true;
+                this.hasAction = false;
+                this.salesSummaryListDisplay.Clear();
+                this.sslfConsumer = filterView.FindViewById<EditText>(Resource.Id.etFilterConsumer).Text;
+                this.sslfVendor = filterView.FindViewById<EditText>(Resource.Id.etFilterVendor).Text;
+                this.showMoreSummary_Clicked(sender, e);
+            });
+            dialogBuilder.Create().Show();
+        }
         public void unCheckAllSaleInSummaryFab_Clicked(object sender, EventArgs e)
         {
             int count = 0;
@@ -1850,6 +2602,7 @@ namespace POSV1
                 this.salesMasterModel.AmountReceived = getSaleDetail.salesSummary[0].AmountReceived;
                 this.salesMasterModel.SoldBy = getSaleDetail.salesSummary[0].SoldBy;
                 this.salesMasterModel.SoldTo = getSaleDetail.salesSummary[0].SoldTo;
+                this.salesMasterModel.SoldToMobileNo = getSaleDetail.salesSummary[0].SoldToMobileNo;
                 this.salesTime = getSaleDetail.salesSummary[0].SalesDateTime;
                 this.tvSalesTime.Text = string.Format("Time: {0}", this.salesTime.ToString("hh:mm tt"));
                 this.tvTotalAmount.Text = string.Format("Total Amount: {0}", this.formatCurrency(this.salesMasterModel.Amount.ToString()));
@@ -1857,7 +2610,7 @@ namespace POSV1
                 this.tvChange.Text = string.Format("Change: {0}", this.formatCurrency((this.salesMasterModel.AmountReceived - this.salesMasterModel.Amount).ToString()));
                 this.etConsumer.Text = this.salesMasterModel.SoldTo.ToString();
                 this.etVendor.Text = this.salesMasterModel.SoldBy.ToString();
-
+                this.etConsumerMobileNo.Text = this.salesMasterModel.SoldToMobileNo.ToString();
                 currentSales.Clear();
                 
                 foreach (SalesSummary saleSummary in getSaleDetail.salesSummary)
@@ -1943,6 +2696,8 @@ namespace POSV1
             if (this.hasAction)
                 return;
 
+            this.hasAction = true;
+
             int count = 0;
 
             Response getSalesSummary = new Response();
@@ -1953,7 +2708,13 @@ namespace POSV1
                 return;
 
             this.invokeLoader();
-            getSalesSummary = salesSummaryModel.getSalesByDateTime(this.salesDate, "my_store.db", this.salesSummaryListDisplay.Count);
+            getSalesSummary = salesSummaryModel.getSalesByDateTime(this.salesDate
+                , this.sslfFromTime
+                , this.sslfToTime
+                , this.sslfConsumer
+                , this.sslfVendor
+                , "my_store.db"
+                , this.salesSummaryListDisplay.Count);
             if (getSalesSummary.status.Equals("SUCCESS"))
             {
                 foreach (SalesSummary ssm in getSalesSummary.salesSummary)
@@ -1961,10 +2722,8 @@ namespace POSV1
                     this.salesSummaryListDisplay.Add(new ListItem()
                     {
                         Id = ssm.SaleMasterId
-                        ,
-                        IsChecked = false
-                        ,
-                        Description = string.Format("{0} - {1} {2} sold for {3}"
+                        , IsChecked = false
+                        , Description = string.Format("{0} - {1} {2} sold for {3}"
                                               , ssm.SalesDateTime.ToString("hh:mm:ss tt")
                                               , ssm.ItemsSold
                                               , ssm.ItemsSold > 1 ? "Items" : "Item"
@@ -2226,6 +2985,7 @@ namespace POSV1
                 tvIndicator.Text = "Items in cart were all deleted.";
             }
         }
+        /*----------------------------------Main FABS----------------------------------------*/
         public void fabMainAddEditSales_Clicked(object sender, EventArgs e)
         {
             if (this.hasAction)
@@ -2679,10 +3439,6 @@ namespace POSV1
             if (this.hideDynamicPopupDialogThread != null)
                 this.hideDynamicPopupDialogThread.Abort();
 
-            //Hide Search Fab Edit Text
-            this.etSearchFab = dynamicPopupMenuView.FindViewById<EditText>(Resource.Id.etSearchFab);
-            this.etSearchFab.Visibility = ViewStates.Gone;
-
             this.tvIndicator = dynamicPopupMenuView.FindViewById<TextView>(Resource.Id.tvIndicator);
             this.tvIndicator.Visibility = ViewStates.Visible;
             this.tvIndicator.Text = "Tap blank space to go back in the list.";
@@ -2749,6 +3505,17 @@ namespace POSV1
             this.tvChildFab5LayoutParams = (FrameLayout.LayoutParams)this.tvChildFab5.LayoutParameters;
             this.tvChildFab5.Text = "Check-All Sales";
 
+            this.dSearchFab = dynamicPopupMenuView.FindViewById<com.refractored.fab.FloatingActionButton>(Resource.Id.searchFab);
+            this.dSearchFabLayoutParams = (FrameLayout.LayoutParams)this.dSearchFab.LayoutParameters;
+            this.dSearchFab.SetImageResource(Resource.Drawable.Search);
+            this.dSearchFab.Size = FabSize.Mini;
+
+            this.etSearchFab = dynamicPopupMenuView.FindViewById<EditText>(Resource.Id.etSearchFab);
+            this.etSearchFabLayoutParams = (FrameLayout.LayoutParams)this.etSearchFab.LayoutParameters;
+            this.etSearchFab.Text = "Find sales";
+            this.etSearchFab.Enabled = false;
+
+
             if (this.salesSummaryListAdapter.getSelectedItems().Count == 0 || this.salesSummaryListAdapter.getSelectedItems().Count != 1)
             {
                 this.dChildFab1 = null;
@@ -2792,6 +3559,18 @@ namespace POSV1
                 this.tvChildFab5.Animation = this.childFab_show;
                 this.tvChildFab5.Clickable = true;
 
+                this.dSearchFabLayoutParams.RightMargin = this.dSearchFabLayoutParams.RightMargin + (int)(this.dSearchFabLayoutParams.RightMargin * .60);
+                this.dSearchFabLayoutParams.BottomMargin = this.dSearchFabLayoutParams.BottomMargin * 14;
+                this.dSearchFab.LayoutParameters = this.dSearchFabLayoutParams;
+                this.dSearchFab.Animation = this.childFab_show;
+                this.dSearchFab.Clickable = true;
+
+                this.etSearchFabLayoutParams.RightMargin = this.etSearchFabLayoutParams.RightMargin + (int)(etSearchFabLayoutParams.RightMargin * 4);
+                this.etSearchFabLayoutParams.BottomMargin = this.etSearchFabLayoutParams.BottomMargin * 14 + (int)(etSearchFabLayoutParams.BottomMargin * .4);
+                this.etSearchFab.LayoutParameters = this.etSearchFabLayoutParams;
+                this.etSearchFab.Animation = this.childFab_show;
+                this.etSearchFab.Clickable = true;
+
                 this.fabAnimationWatcher = new System.Threading.Thread(new ThreadStart(delegate
                 {
                     System.Threading.Thread.Sleep(350);
@@ -2802,6 +3581,7 @@ namespace POSV1
                 this.dChildFab3.Click += this.deleteSelectedSaleInSummaryFab_Clicked;
                 this.dChildFab4.Click += this.unCheckAllSaleInSummaryFab_Clicked;
                 this.dChildFab5.Click += this.checkAllSaleInSummaryFab_Clicked;
+                this.dSearchFab.Click += this.findSaleInSummaryFab_Clicked;
             }
             else
             {
@@ -2865,6 +3645,18 @@ namespace POSV1
                 this.tvChildFab5.Animation = this.childFab_show;
                 this.tvChildFab5.Clickable = true;
 
+                this.dSearchFabLayoutParams.RightMargin = this.dSearchFabLayoutParams.RightMargin + (int)(this.dSearchFabLayoutParams.RightMargin * .60);
+                this.dSearchFabLayoutParams.BottomMargin = this.dSearchFabLayoutParams.BottomMargin * 20;
+                this.dSearchFab.LayoutParameters = this.dSearchFabLayoutParams;
+                this.dSearchFab.Animation = this.childFab_show;
+                this.dSearchFab.Clickable = true;
+
+                this.etSearchFabLayoutParams.RightMargin = this.etSearchFabLayoutParams.RightMargin + (int)(etSearchFabLayoutParams.RightMargin * 4);
+                this.etSearchFabLayoutParams.BottomMargin = this.etSearchFabLayoutParams.BottomMargin * 20 + (int)(etSearchFabLayoutParams.BottomMargin * .4);
+                this.etSearchFab.LayoutParameters = this.etSearchFabLayoutParams;
+                this.etSearchFab.Animation = this.childFab_show;
+                this.etSearchFab.Clickable = true;
+
                 this.fabAnimationWatcher = new System.Threading.Thread(new ThreadStart(delegate
                 {
                     System.Threading.Thread.Sleep(350);
@@ -2877,10 +3669,29 @@ namespace POSV1
                 this.dChildFab3.Click += this.deleteSelectedSaleInSummaryFab_Clicked;
                 this.dChildFab4.Click += this.unCheckAllSaleInSummaryFab_Clicked;
                 this.dChildFab5.Click += this.checkAllSaleInSummaryFab_Clicked;
+                this.dSearchFab.Click += this.findSaleInSummaryFab_Clicked;
             }
 
             this.dMainFab.Click += this.showMoreSummary_Clicked;
             dynamicPopupMenuView.Click += this.hideDynamicPopupMenu_Clicked;
+        }
+        public void salesReportMainFab_Clicked(object sender, EventArgs e)
+        {
+            if(this.salesReportItemDisplay[0].type == 1)
+            {
+                //Sales By Date
+                this.getSalesReportByDate(this.srfFrom, this.srfTo, true);
+            }
+            else if(this.salesReportItemDisplay[0].type == 2)
+            {
+                //Sales By Consumer
+                this.getSalesReportByConsumer(this.srfFrom, this.srfTo, this.srfConsumer, true);
+            }
+            else
+            {
+                //Sales By Vendor
+                this.getSalesReportByVendor(this.srfFrom, this.srfTo, this.srfVendor, true);
+            }
         }
         /* --------------------------------------END OF SALES-----------------------------------*/
         /* ------------------------------------------INVENTORY----------------------------------*/
@@ -3001,7 +3812,7 @@ namespace POSV1
             }
             else
             {
-                this.getItems(string.Format("SELECT * FROM Item WHERE NAME LIKE '{0}%' OR BARCODE LIKE '{1}%'", this.filterValue, this.filterValue));
+                this.getItems(string.Format("SELECT * FROM Item WHERE NAME LIKE '%{0}%' OR BARCODE LIKE '%{1}%'", this.filterValue, this.filterValue));
             }
         }
         public void hidePopupMenuView_Clicked(object sender, EventArgs e)
@@ -3256,7 +4067,7 @@ namespace POSV1
                     foreach (ListItem listItem in listItemAdapter.getSelectedItems())
                     {
                         tvIndicator.Text = string.Format("Preparing in deleting {0}...", listItem.Description.Split('(')[0]);
-                        command += string.Format("DELETE FROM Item WHERE Id = {0} AND (SELECT COUNT(Id) FROM Sale) = 0;", listItem.Id);
+                        command += string.Format("DELETE FROM Item WHERE Id = {0} AND (SELECT COUNT(Id) FROM SaleMaster) = 0;", listItem.Id);
                         firstItem = listItem.Description.Split('(')[0];
                         deletedItems.Add(listItem);
                         this.itemListDisplay.Remove(listItem);

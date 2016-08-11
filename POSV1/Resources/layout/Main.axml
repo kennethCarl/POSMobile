@@ -17,6 +17,30 @@
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+    <!--Sales Report-->
+      <FrameLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/SalesReport"
+            android:visibility="gone">
+        <ListView
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lvSalesReport" />
+        <com.refractored.fab.FloatingActionButton
+            android:id="@+id/salesReportMainFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            android:src="@drawable/More"
+            app:fab_colorNormal="#00bcd4"
+            app:fab_colorPressed="#03a9f4"
+            app:fab_colorRipple="#bdbdbd" />
+      </FrameLayout>
     <!--Main Sales Content-->
         <FrameLayout
             android:id="@+id/SalesMainLayout"
@@ -132,7 +156,7 @@
                 <GridLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:rowCount="8"
+                    android:rowCount="9"
                     android:columnCount="1">
                     <TextView
                         android:id="@+id/tvSalesTime"
@@ -179,6 +203,23 @@
                             android:hint="Consumer"
                             android:capitalize="characters"
                             android:textSize="15sp" />
+                    </android.support.design.widget.TextInputLayout>
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="5dp"
+                        android:theme="@style/TextLabel1">
+                        <EditText
+                            android:id="@+id/etConsumerMobileNo"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Mobile Number"
+                            android:capitalize="characters"
+                            android:textSize="15sp"
+                            android:text=""
+                            android:inputType="number" />
                     </android.support.design.widget.TextInputLayout>
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"

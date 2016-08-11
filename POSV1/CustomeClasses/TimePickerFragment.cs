@@ -17,8 +17,6 @@ namespace POSV1.CustomeClasses
         // TAG can be any string of your choice.
         public static readonly string TAG = "X:" + typeof(TimePickerFragment).Name.ToUpper();
         public DateTime currentDateTime;
-        public string Time;
-        public string Minutes;
         // Initialize this value to prevent NullReferenceExceptions.
         Action<DateTime> _timeSelectedHandler = delegate { };
         Action<DateTime> _timeCanceledHandler = delegate { };

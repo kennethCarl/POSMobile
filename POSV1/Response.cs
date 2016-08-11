@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using POSV1.Model;
+using POSV1.CustomeClasses;
 
 namespace POSV1
 {
@@ -26,5 +27,6 @@ namespace POSV1
         public List<SaleMaster> saleList;
         public List<SaleDetail> saleDetailList;
         public List<SalesSummary> salesSummary;
+        public List<SalesReportItem> salesReportList;
     }
 }

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="20dp"
+        android:theme="@style/TextLabel1">
+        <EditText
+            android:id="@+id/etReportFrom"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Start Date"
+            android:textSize="15sp"
+            android:text=""
+            android:textColor="@drawable/TextColorDarkGray" />
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:theme="@style/TextLabel1">
+        <EditText
+            android:id="@+id/etReportTo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="End Date"
+            android:textSize="15sp"
+            android:text=""
+            android:textColor="@drawable/TextColorDarkGray" />
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:theme="@style/TextLabel1">
+        <EditText
+            android:id="@+id/etReportConsumer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Consumer"
+            android:textSize="15sp"
+            android:text="GORGEOUS"
+            android:visibility="gone"
+            android:capitalize="characters"
+            android:textColor="@drawable/TextColorDarkGray" />
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:theme="@style/TextLabel1">
+        <EditText
+            android:id="@+id/etReportVendor"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Vendor"
+            android:textSize="15sp"
+            android:text="SMART VENDOR"
+            android:visibility="gone"
+            android:capitalize="characters"
+            android:textColor="@drawable/TextColorDarkGray" />
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:theme="@style/TextLabel1">
+        <EditText
+            android:id="@+id/etReportFocus"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="To"
+            android:textSize="15sp"
+            android:text=""
+            android:visibility="visible"
+            android:textColor="@drawable/TextColorDarkGray" />
+    </android.support.design.widget.TextInputLayout>
+</LinearLayout>

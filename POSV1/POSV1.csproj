@@ -112,6 +112,8 @@
     <Compile Include="CustomeClasses\ListItem.cs" />
     <Compile Include="CustomeClasses\ListItemAdapter.cs" />
     <Compile Include="CustomeClasses\RightDrawerAdapter.cs" />
+    <Compile Include="CustomeClasses\SalesReportAdapter.cs" />
+    <Compile Include="CustomeClasses\SalesReportItem.cs" />
     <Compile Include="CustomeClasses\TableItem.cs" />
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="CustomeClasses\TimePickerFragment.cs" />
@@ -191,8 +193,13 @@
     <AndroidResource Include="Resources\layout\CartItemDetail.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\FromToDate_Popup.axml" />
+    <AndroidResource Include="Resources\layout\SaleReportFilterLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\layout\AddEditCartDetail.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\SaleSummaryFilterLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -295,6 +302,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\Cart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\SalesReportRowLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets" Condition="Exists('..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" />

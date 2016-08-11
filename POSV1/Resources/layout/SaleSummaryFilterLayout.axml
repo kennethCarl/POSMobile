@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:rowCount="5"
+            android:columnCount="1"
+            android:layout_marginTop="15dp">
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="20dp"
+                android:theme="@style/TextLabel1">
+                <EditText
+                    android:id="@+id/etFilterFromTime"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="From"
+                    android:capitalize="characters"
+                    android:textSize="15sp"
+                    android:text="12:01:00 AM"
+                    android:enabled="false"
+                    android:imeOptions="actionGo"
+                    android:textColor="@drawable/TextColorDarkGray" />
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="5dp"
+                android:theme="@style/TextLabel1">
+                <EditText
+                    android:id="@+id/etFilterToTime"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="To"
+                    android:capitalize="characters"
+                    android:textSize="15sp"
+                    android:text="11:59:59 PM"
+                    android:enabled="false"
+                    android:textColor="@drawable/TextColorDarkGray" />
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="5dp"
+                android:theme="@style/TextLabel1">
+                <EditText
+                    android:id="@+id/etFilterVendor"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Vendor"
+                    android:capitalize="characters"
+                    android:textSize="15sp"
+                    android:text=" "
+                    android:enabled="true"
+                    android:textColor="@drawable/TextColorDarkGray" />
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="5dp"
+                android:theme="@style/TextLabel1">
+                <EditText
+                    android:id="@+id/etFilterConsumer"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Consumer"
+                    android:capitalize="characters"
+                    android:textSize="15sp"
+                    android:text=" "
+                    android:enabled="true"
+                    android:textColor="@drawable/TextColorDarkGray" />
+            </android.support.design.widget.TextInputLayout>
+        </GridLayout>
+    </ScrollView>
+</LinearLayout>

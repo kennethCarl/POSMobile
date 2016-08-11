@@ -30,6 +30,10 @@ POSV1.CustomeClasses.RightDrawerAdapter, POSV1;md5675e66de914428fab2999229b6b065
 POSV1.CustomeClasses.RightDrawerAdapter, POSV1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md5675e66de914428fab2999229b6b06510.RightDrawerAdapter
 POSV1.CustomeClasses.RightDrawerAdapter;md5675e66de914428fab2999229b6b06510.RightDrawerAdapter
 posv1.customeclasses.RightDrawerAdapter;md5675e66de914428fab2999229b6b06510.RightDrawerAdapter
+POSV1.CustomeClasses.SalesReportAdapter, POSV1;md5675e66de914428fab2999229b6b06510.SalesReportAdapter
+POSV1.CustomeClasses.SalesReportAdapter, POSV1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md5675e66de914428fab2999229b6b06510.SalesReportAdapter
+POSV1.CustomeClasses.SalesReportAdapter;md5675e66de914428fab2999229b6b06510.SalesReportAdapter
+posv1.customeclasses.SalesReportAdapter;md5675e66de914428fab2999229b6b06510.SalesReportAdapter
 POSV1.MainActivity, POSV1;md5718af39fa154ec8f2b1a0282db7f814a.MainActivity
 POSV1.MainActivity, POSV1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md5718af39fa154ec8f2b1a0282db7f814a.MainActivity
 POSV1.MainActivity;md5718af39fa154ec8f2b1a0282db7f814a.MainActivity

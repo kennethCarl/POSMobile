@@ -6,6 +6,7 @@
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.SEND_SMS" />
   <application android:label="My Store" android:icon="@drawable/icon" android:debuggable="false" android:name="android.app.Application" android:allowBackup="true">
     <activity android:label="Configure" android:theme="@style/AppTheme" android:name="md5718af39fa154ec8f2b1a0282db7f814a.ConfigureActivity" />
     <activity android:theme="@style/AppTheme" android:name="md5718af39fa154ec8f2b1a0282db7f814a.PreMainActivity">

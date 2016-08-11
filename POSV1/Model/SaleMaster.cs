@@ -24,6 +24,7 @@ namespace POSV1.Model
         public double AmountReceived { get; set; }
         public string SoldBy { get; set; }
         public string SoldTo { get; set; }
+        public string SoldToMobileNo { get; set; }
         public Response getSalesByDate(DateTime date, string dbName)
         {
             Response response = new Response();
