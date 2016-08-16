@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="Hello">Hello World, Click Me!</string>
-    <string name="ApplicationName">POS</string>
+    <string name="ApplicationName">MyBiz</string>
     <string name="LeftDrawerDescWhenOpen">What to choose?</string>
-    <string name="LeftDrawerDescWhenClose">My Store</string>
+    <string name="LeftDrawerDescWhenClose">My Biz</string>
     <string name="Sales">Sales</string>
     <string name="SalesList">List of Sales</string>
     <string name="CartList">Items In Cart</string>

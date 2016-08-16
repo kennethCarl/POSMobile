@@ -586,7 +586,16 @@ namespace POSV1
                                 this.hideLayouts();
                                 this.salesReportItemDisplay.Clear();
                                 this.srfConsumer = this.filterView.FindViewById<EditText>(Resource.Id.etReportConsumer).Text.Trim().ToUpper();
-                                this.getSalesReportByConsumer(this.srfFrom, this.srfTo, this.srfConsumer, false);
+                                if (this.srfConsumer.Trim().Equals(""))
+                                {
+                                    this.showMessage("Consumer name is required.");
+                                    this.flMainSales.Visibility = ViewStates.Visible;
+                                    this.showOptionMenu(Resource.Id.action_more);
+                                }
+                                else
+                                {
+                                    this.getSalesReportByConsumer(this.srfFrom, this.srfTo, this.srfConsumer, false);
+                                }
                             });
                             break;
                         default:  // Sales By Vendor
@@ -596,7 +605,16 @@ namespace POSV1
                                 this.hideLayouts();
                                 this.salesReportItemDisplay.Clear();
                                 this.srfVendor = this.filterView.FindViewById<EditText>(Resource.Id.etReportVendor).Text.Trim().ToUpper();
-                                this.getSalesReportByVendor(this.srfFrom, this.srfTo, this.srfVendor, false);
+                                if (this.srfVendor.Trim().Equals(""))
+                                {
+                                    this.showMessage("Vendor name is required.");
+                                    this.flMainSales.Visibility = ViewStates.Visible;
+                                    this.showOptionMenu(Resource.Id.action_more);
+                                }
+                                else
+                                {
+                                    this.getSalesReportByVendor(this.srfFrom, this.srfTo, this.srfVendor, false);
+                                }
                             });
                             break;
                     }
@@ -1802,7 +1820,7 @@ namespace POSV1
                             smsMessage += string.Format("Change: {0}", this.formatCurrency((Convert.ToDouble(this.etAmountReceived.Text.Trim()) - this.salesMasterModel.Amount).ToString())) + "\n";
                             smsMessage += string.Format("Vendor: {0}", this.etVendor.Text.Trim()) + "\n \n";
                             smsMessage += string.Format("Items Purchased:") + "\n";
-                            smsMessage += smsItems + "\n My Store";
+                            smsMessage += smsItems + "\n My Biz";
                             this.sendSMS(this.etConsumerMobileNo.Text.Trim(), smsMessage);
                         }
                         this.resetSales();
@@ -1858,8 +1876,8 @@ namespace POSV1
                                   , saleDetailModel1.ItemId
                                   , saleDetailModel1.Quantity) + "\n";
                             //Update Item
-                            command += string.Format("UPDATE Item SET AvailableStock = {0} WHERE Id = {1};"
-                                , this.currentSales[index].AvailableStock - saleDetailModel1.Quantity
+                            command += string.Format("UPDATE Item SET AvailableStock = AvailableStock - {0} WHERE Id = {1};"
+                                , saleDetailModel1.Quantity
                                 , saleDetailModel1.ItemId) + "\n";
                         }
                         index = index + 1;
@@ -1899,7 +1917,7 @@ namespace POSV1
                             smsMessage += string.Format("Change: {0}", this.formatCurrency((this.salesMasterModel.AmountReceived - this.salesMasterModel.Amount).ToString())) + "\n";
                             smsMessage += string.Format("Vendor: {0}", this.etVendor.Text.Trim()) + "\n \n";
                             smsMessage += string.Format("Items Purchased:") + "\n";
-                            smsMessage += smsItems + "\n My Store";
+                            smsMessage += smsItems + "\n My Biz";
                             this.sendSMS(this.etConsumerMobileNo.Text.Trim(), smsMessage);
                         }
                         this.hideLayouts();

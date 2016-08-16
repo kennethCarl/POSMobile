@@ -38,6 +38,7 @@ D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\lay
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\layout\loader_show.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\layout\loader_hide.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\layout\cartitemdetail.xml
+D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\layout\salereportfilterlayout.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\layout\addeditcartdetail.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\layout\salesummaryfilterlayout.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\layout\main.xml
@@ -71,6 +72,7 @@ D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\dra
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\drawable\scanwhite.png
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\drawable\loader.png
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\drawable\cart.png
+D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\layout\salesreportrowlayout.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\R.cs.flag
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\uploadflags.txt
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Release\POSV1.dll.mdb
@@ -104,7 +106,5 @@ D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\android
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\android\assets\System.ServiceModel.Internals.dll.mdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\android\assets\System.Transactions.dll.mdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\android\assets\System.Xml.dll.mdb
-D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\layout\salereportfilterlayout.xml
-D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\res\layout\salesreportrowlayout.xml
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\obj\Release\POSV1.dll.mdb
 D:\Carl\Projects\Personal\Mobile Development\POSMobile\POSV1\bin\Release\POSV1.dll.mdb

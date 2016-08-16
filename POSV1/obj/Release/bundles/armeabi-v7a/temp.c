@@ -18,7 +18,7 @@ typedef struct _compressed_data {
 } CompressedAssembly;
 
 extern const unsigned char assembly_data_POSV1_dll [];
-static CompressedAssembly assembly_bundle_POSV1_dll = {{"POSV1.dll", assembly_data_POSV1_dll, 215552}, 67123};
+static CompressedAssembly assembly_bundle_POSV1_dll = {{"POSV1.dll", assembly_data_POSV1_dll, 215552}, 67162};
 extern const unsigned char assembly_data_Java_Interop_dll [];
 static CompressedAssembly assembly_bundle_Java_Interop_dll = {{"Java.Interop.dll", assembly_data_Java_Interop_dll, 92160}, 27416};
 extern const unsigned char assembly_data_Refractored_FloatingActionButton_dll [];
@@ -44,25 +44,26 @@ static CompressedAssembly assembly_bundle_ZXingNetMobile_dll = {{"ZXingNetMobile
 extern const unsigned char assembly_data_System_ServiceModel_Internals_dll [];
 static CompressedAssembly assembly_bundle_System_ServiceModel_Internals_dll = {{"System.ServiceModel.Internals.dll", assembly_data_System_ServiceModel_Internals_dll, 227840}, 86213};
 extern const unsigned char assembly_data_Mono_Android_dll [];
-static CompressedAssembly assembly_bundle_Mono_Android_dll = {{"Mono.Android.dll", assembly_data_Mono_Android_dll, 1250816}, 316838};
+static CompressedAssembly assembly_bundle_Mono_Android_dll = {{"Mono.Android.dll", assembly_data_Mono_Android_dll, 1250816}, 316840};
 extern const unsigned char assembly_data_Mono_Data_Sqlite_dll [];
-static CompressedAssembly assembly_bundle_Mono_Data_Sqlite_dll = {{"Mono.Data.Sqlite.dll", assembly_data_Mono_Data_Sqlite_dll, 2078208}, 2008444};
+static CompressedAssembly assembly_bundle_Mono_Data_Sqlite_dll = {{"Mono.Data.Sqlite.dll", assembly_data_Mono_Data_Sqlite_dll, 2078208}, 2008445};
+extern const unsigned char assembly_config_Mono_Data_Sqlite_dll [];
 extern const unsigned char assembly_data_mscorlib_dll [];
-static CompressedAssembly assembly_bundle_mscorlib_dll = {{"mscorlib.dll", assembly_data_mscorlib_dll, 2013184}, 682071};
+static CompressedAssembly assembly_bundle_mscorlib_dll = {{"mscorlib.dll", assembly_data_mscorlib_dll, 2013184}, 682072};
 extern const unsigned char assembly_data_System_Core_dll [];
 static CompressedAssembly assembly_bundle_System_Core_dll = {{"System.Core.dll", assembly_data_System_Core_dll, 40448}, 19185};
 extern const unsigned char assembly_data_System_Data_dll [];
 static CompressedAssembly assembly_bundle_System_Data_dll = {{"System.Data.dll", assembly_data_System_Data_dll, 646144}, 240260};
 extern const unsigned char assembly_data_System_dll [];
-static CompressedAssembly assembly_bundle_System_dll = {{"System.dll", assembly_data_System_dll, 739840}, 284537};
+static CompressedAssembly assembly_bundle_System_dll = {{"System.dll", assembly_data_System_dll, 739840}, 284536};
 extern const unsigned char assembly_data_System_Transactions_dll [];
-static CompressedAssembly assembly_bundle_System_Transactions_dll = {{"System.Transactions.dll", assembly_data_System_Transactions_dll, 14336}, 6130};
+static CompressedAssembly assembly_bundle_System_Transactions_dll = {{"System.Transactions.dll", assembly_data_System_Transactions_dll, 14336}, 6129};
 extern const unsigned char assembly_data_System_Xml_dll [];
-static CompressedAssembly assembly_bundle_System_Xml_dll = {{"System.Xml.dll", assembly_data_System_Xml_dll, 1010176}, 357955};
+static CompressedAssembly assembly_bundle_System_Xml_dll = {{"System.Xml.dll", assembly_data_System_Xml_dll, 1010176}, 357954};
 extern const unsigned char assembly_data_System_Runtime_Serialization_dll [];
-static CompressedAssembly assembly_bundle_System_Runtime_Serialization_dll = {{"System.Runtime.Serialization.dll", assembly_data_System_Runtime_Serialization_dll, 6144}, 2221};
+static CompressedAssembly assembly_bundle_System_Runtime_Serialization_dll = {{"System.Runtime.Serialization.dll", assembly_data_System_Runtime_Serialization_dll, 6144}, 2219};
 extern const unsigned char assembly_data_System_Numerics_dll [];
-static CompressedAssembly assembly_bundle_System_Numerics_dll = {{"System.Numerics.dll", assembly_data_System_Numerics_dll, 23040}, 10513};
+static CompressedAssembly assembly_bundle_System_Numerics_dll = {{"System.Numerics.dll", assembly_data_System_Numerics_dll, 23040}, 10512};
 
 static const CompressedAssembly *compressed [] = {
 	&assembly_bundle_POSV1_dll,
@@ -94,6 +95,8 @@ static const CompressedAssembly *compressed [] = {
 static char *image_name = "POSV1.dll";
 
 static void install_dll_config_files (void (register_config_for_assembly_func)(const char *, const char *)) {
+
+	register_config_for_assembly_func ("Mono.Data.Sqlite.dll", assembly_config_Mono_Data_Sqlite_dll);
 
 }
 
